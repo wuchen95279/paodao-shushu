@@ -611,24 +611,6 @@
             "特殊"
           ],
           "image": ""
-        },
-        {
-          "id": "rpg",
-          "name": "RPG",
-          "fullName": "RPG-7",
-          "type": "Special",
-          "description": "火箭推进榴弹，范围伤害",
-          "fireRate": 10,
-          "damage": 100,
-          "accuracy": 50,
-          "range": 80,
-          "rating": 9.5,
-          "code": "RPG7-HEAT",
-          "tags": [
-            "范围伤害",
-            "火箭弹"
-          ],
-          "image": ""
         }
       ]
     }
