@@ -1,0 +1,156 @@
+{
+  "loadouts": [
+    {
+      "id": "lo_svch_silent",
+      "weaponId": "kac-srr",
+      "name": "SVCH消音高初速满改版",
+      "code": "~6KFHL4G02I04HIKMCGFVL3",
+      "score": 462.4,
+      "author": "羊驼（鼠众学教父）",
+      "image": "https://game.gtimg.cn/images/dfm/cp/a20240729directory/og_image.png",
+      "tags": ["满改神器", "新武器", "射速消音"],
+      "description": "消音高初速满改版，高上限低下限",
+      "attachments": [
+        {"slot": "枪口", "name": "先进多口径消音器", "icon": "🔇"},
+        {"slot": "枪管", "name": "SVCH长枪管", "icon": "🔧"},
+        {"slot": "护木", "name": "游侠护木片×4", "icon": "🛡️"},
+        {"slot": "前握把", "name": "SVCH短护木", "icon": "✋"},
+        {"slot": "上机匣", "name": "多用途战术增高架", "icon": "📐"},
+        {"slot": "瞄具座", "name": "侧副瞄具", "icon": "🔭"},
+        {"slot": "后握把", "name": "共振人体工程握把", "icon": "🤛"},
+        {"slot": "弹匣", "name": "SVCH波风井联管匣", "icon": "📦"},
+        {"slot": "枪托", "name": "骨架阻击枪托", "icon": "🦴"},
+        {"slot": "后托", "name": "SVCH镂空后握把", "icon": "✋"},
+        {"slot": "贴腮板", "name": "托腮板", "icon": "🧱"}
+      ],
+      "stats": {
+        "基础伤害":   {"base": 47,  "change": 0,   "max": 100},
+        "优势射程":   {"base": 96,  "change": 31,  "max": 150},
+        "后坐力控制": {"base": 62,  "change": 22,  "max": 100},
+        "操控速度":   {"base": 53,  "change": 1,   "max": 100},
+        "武器稳定性": {"base": 58,  "change": 8,   "max": 100},
+        "腰射精度":   {"base": -5,  "change": 0,   "max": 100}
+      },
+      "notes": "消音高初速满改版，高上限低下限。建议远距离卡点使用，中近距离腰射较差。",
+      "createdAt": "2026-07-06"
+    },
+    {
+      "id": "lo_hk416_mid",
+      "weaponId": "hk416",
+      "name": "HK416中距离稳枪配置",
+      "code": "~HK416-MID-001-A7B2C3D4E5F6G7H8",
+      "score": 388.5,
+      "author": "跑刀鼠鼠",
+      "image": "",
+      "tags": ["新手推荐", "稳定性", "中距离"],
+      "description": "中距离稳枪流，配件堆稳定性，新手友好",
+      "attachments": [
+        {"slot": "枪口", "name": "消音器", "icon": "🔇"},
+        {"slot": "枪管", "name": "长枪管", "icon": "🔧"},
+        {"slot": "前握把", "name": "垂直握把", "icon": "✋"},
+        {"slot": "弹匣", "name": "加长弹匣", "icon": "📦"},
+        {"slot": "瞄具", "name": "红点瞄准镜", "icon": "🔴"},
+        {"slot": "枪托", "name": "伸缩枪托", "icon": "🦴"}
+      ],
+      "stats": {
+        "基础伤害":   {"base": 42,  "change": 2,   "max": 100},
+        "优势射程":   {"base": 75,  "change": 20,  "max": 150},
+        "后坐力控制": {"base": 80,  "change": 25,  "max": 100},
+        "操控速度":   {"base": 60,  "change": -10, "max": 100},
+        "武器稳定性": {"base": 85,  "change": 18,  "max": 100},
+        "腰射精度":   {"base": 35,  "change": 5,   "max": 100}
+      },
+      "notes": "适合中距离交火，稳定性优先，适合新手入门。消音器减少暴露，配合长枪管提升射程。",
+      "createdAt": "2026-07-06"
+    },
+    {
+      "id": "lo_mp5_cqb",
+      "weaponId": "mp5",
+      "name": "MP5室内爆发流",
+      "code": "~MP5-CQB-002-X9Y8Z7W6V5U4T3S2",
+      "score": 421.8,
+      "author": "跑刀鼠鼠",
+      "image": "",
+      "tags": ["近距离", "爆发", "CQB"],
+      "description": "室内CQB专用配置，开镜速度极快，近距离遭遇战无敌",
+      "attachments": [
+        {"slot": "枪口", "name": "消音器", "icon": "🔇"},
+        {"slot": "枪管", "name": "短枪管", "icon": "🔧"},
+        {"slot": "前握把", "name": "激光瞄准器", "icon": "🔦"},
+        {"slot": "弹匣", "name": "加长弹匣", "icon": "📦"},
+        {"slot": "枪托", "name": "折叠枪托", "icon": "🦴"}
+      ],
+      "stats": {
+        "基础伤害":   {"base": 32,  "change": 0,   "max": 100},
+        "优势射程":   {"base": 35,  "change": -5,  "max": 150},
+        "后坐力控制": {"base": 55,  "change": 10,  "max": 100},
+        "操控速度":   {"base": 88,  "change": 20,  "max": 100},
+        "武器稳定性": {"base": 65,  "change": 8,   "max": 100},
+        "腰射精度":   {"base": 75,  "change": 25,  "max": 100}
+      },
+      "notes": "室内CQB专用配置，开镜速度极快，近距离遭遇战无敌。激光瞄准器能大幅提升腰射精度。",
+      "createdAt": "2026-07-06"
+    },
+    {
+      "id": "lo_m82_sniper",
+      "weaponId": "m82",
+      "name": "M82A1反器材满改",
+      "code": "~M82-SNIPER-003-Q1W2E3R4T5Y6U7I8",
+      "score": 498.2,
+      "author": "鼠众学教父",
+      "image": "",
+      "tags": ["狙击", "远距离", "一击必杀"],
+      "description": "反器材狙击配置，一发入魂，专为远程设计",
+      "attachments": [
+        {"slot": "枪口", "name": "抑声器", "icon": "🔇"},
+        {"slot": "枪管", "name": "加长枪管", "icon": "🔧"},
+        {"slot": "前握把", "name": "双脚架", "icon": "🦵"},
+        {"slot": "弹匣", "name": "加长弹匣", "icon": "📦"},
+        {"slot": "瞄具", "name": "8倍瞄准镜", "icon": "🔭"},
+        {"slot": "枪托", "name": "固定枪托", "icon": "🦴"}
+      ],
+      "stats": {
+        "基础伤害":   {"base": 98,  "change": 10,  "max": 100},
+        "优势射程":   {"base": 130, "change": 35,  "max": 150},
+        "后坐力控制": {"base": 45,  "change": 15,  "max": 100},
+        "操控速度":   {"base": 22,  "change": -25, "max": 100},
+        "武器稳定性": {"base": 90,  "change": 30,  "max": 100},
+        "腰射精度":   {"base": 10,  "change": 0,   "max": 100}
+      },
+      "notes": "反器材狙击配置，一发入魂。适合蹲点狙击和远距离击杀，注意隐蔽位置选择。",
+      "createdAt": "2026-07-06"
+    }
+  ],
+  "attachmentTypes": [
+    {
+      "id": "muzzle",
+      "name": "枪口",
+      "options": ["消音器", "抑声器", "补偿器", "消焰器", "无"]
+    },
+    {
+      "id": "barrel",
+      "name": "枪管",
+      "options": ["长枪管", "短枪管", "标准枪管", "加长枪管", "无"]
+    },
+    {
+      "id": "grip",
+      "name": "前握把",
+      "options": ["垂直握把", "角握把", "激光瞄准器", "拇指托", "双脚架", "无"]
+    },
+    {
+      "id": "magazine",
+      "name": "弹匣",
+      "options": ["标准弹匣", "加长弹匣", "快速弹匣", "双弹匣", "无"]
+    },
+    {
+      "id": "scope",
+      "name": "瞄具",
+      "options": ["无", "红点瞄准镜", "全息瞄准镜", "3倍瞄准镜", "4倍瞄准镜", "8倍瞄准镜", "15倍瞄准镜"]
+    },
+    {
+      "id": "stock",
+      "name": "枪托",
+      "options": ["伸缩枪托", "折叠枪托", "固定枪托", "无枪托", "无"]
+    }
+  ]
+}
