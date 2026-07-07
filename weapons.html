@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>枪械图鉴 - 跑刀鼠鼠</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ===== 游戏内风格 ===== */
+        .weapons-page { max-width: 1100px; margin: 0 auto; padding: 40px 20px 60px; }
+
+        /* 列表筛选 */
+        .weapons-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .filter-btn {
+            padding: 9px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--dark-light);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .filter-btn:hover { border-color: var(--primary); color: var(--text); }
+        .filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        /* 武器卡片 */
+        .weapon-card {
+            background: var(--bg-card);
+            border: 1px solid var(--dark-light);
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: grid;
+            grid-template-columns: 60px 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        .weapon-card:hover {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.05);
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+        }
+        .weapon-card-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(99,102,241,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+        .weapon-card-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+        .weapon-card-info .type-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .type-badge.AR  { background:rgba(99,102,241,0.15); color:#818cf8; }
+        .type-badge.SMG { background:rgba(14,165,233,0.15); color:#38bdf8; }
+        .type-badge.SR  { background:rgba(168,85,247,0.15); color:#c084fc; }
+        .type-badge.SG  { background:rgba(239,68,68,0.15); color:#f87171; }
+        .type-badge.LMG { background:rgba(249,115,22,0.15); color:#fb923c; }
+        .type-badge.Pistol { background:rgba(34,197,94,0.15); color:#4ade80; }
+        .type-badge.Special { background:rgba(236,72,153,0.15); color:#f472b6; }
+        .weapon-card-info p { font-size: 13px; color: var(--text-muted); }
+        .weapon-card-stats { text-align: right; min-width: 140px; }
+        .weapon-card-stats .mini-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .weapon-card-stats .mini-stat-label { color: var(--text-muted); }
+        .weapon-card-stats .mini-stat-bar {
+            width: 80px;
+            height: 4px;
+            background: var(--dark);
+            border-radius: 2px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .weapon-card-stats .mini-stat-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        /* 详情模态框 */
+        .modal-weapon-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-weapon-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .modal-weapon-icon {
+            width: 140px;
+            height: 90px;
+            margin: 0 auto 20px;
+            background: rgba(99,102,241,0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+        .modal-weapon-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .modal-weapon-fullname { font-size: 15px; color: var(--text-muted); margin-bottom: 4px; }
+        .modal-weapon-desc { font-size: 14px; color: var(--text-muted); margin-top: 12px; line-height: 1.7; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+        .modal-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-section-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 属性进度条（详情页） */
+        .attr-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+        .attr-label {
+            width: 90px;
+            font-size: 13px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .attr-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .attr-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .attr-value {
+            width: 36px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* 配件槽 */
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 8px;
+        }
+        .slot-item {
+            background: var(--dark);
+            border: 1px solid var(--dark-light);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slot-item-icon { font-size: 18px; }
+        .slot-item-name { font-size: 12px; color: var(--text-muted); }
+        .slot-item-slot { font-size: 13px; font-weight: 600; }
+
+        /* 武器类型颜色 */
+        .ATTR-damage  { background: #ef4444; }
+        .ATTR-fireRate { background: #f59e0b; }
+        .ATTR-accuracy { background: #3b82f6; }
+        .ATTR-range { background: #8b5cf6; }
+        .ATTR-stability { background: #22c55e; }
+        .ATTR-mobility { background: #06b6d4; }
+
+        /* 评分 */
+        .score-big {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 评分区 */
+        .rating-area {
+            text-align: center;
+            margin-top: 16px;
+        }
+        .rating-area .score-big { font-size: 28px; }
+        .rating-area .score-label { font-size: 12px; color: var(--text-muted); }
+
+        .action-btns { display: flex; gap: 10px; }
+        .action-btns .btn { flex: 1; justify-content: center; }
+
+        @media (max-width: 600px) {
+            .weapon-card { grid-template-columns: 50px 1fr; }
+            .weapon-card-stats { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🐭</span>
+                <span class="logo-text">跑刀鼠鼠</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="maps.html" class="nav-link">地图点位</a>
+                <a href="loadouts.html" class="nav-link">改枪码</a>
+                <a href="weapons.html" class="nav-link active">枪械图鉴</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="weapons-page">
+        <!-- 页面标题 -->
+        <div style="padding: 0 0 32px 0;">
+            <h1 class="page-title">🎯 枪械图鉴</h1>
+            <p class="page-subtitle">全武器数据 · 属性评分 · 配件搭配建议</p>
+        </div>
+
+        <!-- 筛选器 -->
+        <div class="weapons-filters">
+            <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">🎯 全部</button>
+            <div id="categoryFilters"></div>
+            <div class="search-box" style="margin-left: auto;">
+                <input type="text" id="searchInput" placeholder="搜索武器..." oninput="filterWeapons()">
+            </div>
+        </div>
+
+        <!-- 武器列表 -->
+        <div id="weaponList"></div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div class="modal-overlay" id="weaponModal">
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalWeaponTitle">枪械详情</h3>
+                <button class="modal-close" onclick="closeWeaponModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalWeaponBody"></div>
+            <div class="modal-footer">
+                <div class="action-btns">
+                    <button class="btn btn-primary" onclick="createLoadoutFromWeapon()">🔧 创建改枪配置</button>
+                    <button class="btn btn-secondary" onclick="closeWeaponModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>跑刀鼠鼠 · 三角洲行动攻略工具</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        let weaponsData = null;
+        let currentCategory = 'all';
+        let currentWeaponId = null;
+        let currentWeaponData = null;
+
+        const ATTR_COLORS = {
+            fireRate: '#f59e0b',
+            damage: '#ef4444',
+            accuracy: '#3b82f6',
+            range: '#8b5cf6',
+            stability: '#22c55e',
+            mobility: '#06b6d4'
+        };
+        const ATTR_NAMES = {
+            fireRate: '射速',
+            damage: '伤害',
+            accuracy: '精度',
+            range: '射程',
+            stability: '稳定性',
+            mobility: '机动'
+        };
+        const TYPE_NAMES = {
+            'AR':'突击步枪','SMG':'冲锋枪','SR':'狙击枪','SG':'霰弹枪',
+            'LMG':'机枪','Pistol':'手枪','Special':'特殊'
+        };
+        const SLOT_ICONS = {
+            '枪口':'🔇','枪管':'🔧','护木':'🛡️','前握把':'✋','上机匣':'📐',
+            '瞄具座':'🔭','后握把':'🤛','弹匣':'📦','枪托':'🦴','后托':'✋',
+            '贴腮板':'🧱','瞄具':'🔭'
+        };
+
+        async function loadWeapons() {
+            weaponsData = await appUtils.loadJSON('data/weapons.json');
+            if (!weaponsData) { appUtils.showToast('加载枪械数据失败','error'); return; }
+            renderCategoryFilters();
+            renderWeapons();
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = weaponsData.categories.map(cat => `
+                <button class="filter-btn" data-category="${cat.id}" onclick="filterByCategory('${cat.id}')">
+                    ${cat.icon} ${cat.name}
+                </button>
+            `).join('');
+        }
+
+        function filterByCategory(catId) {
+            currentCategory = catId;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.category === catId);
+            });
+            renderWeapons();
+        }
+
+        function filterWeapons() { renderWeapons(); }
+
+        function getWeaponRating(w) {
+            // 综合评分公式
+            return Math.round(
+                (w.damage * 0.3 + w.fireRate * 0.25 + w.accuracy * 0.25 + w.range * 0.2) * 5.5
+            );
+        }
+
+        function renderWeapons() {
+            const container = document.getElementById('weaponList');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let weapons = [];
+            if (currentCategory === 'all') {
+                weaponsData.categories.forEach(cat => {
+                    cat.weapons.forEach(w => {
+                        weapons.push({...w, categoryName: cat.name, categoryIcon: cat.icon});
+                    });
+                });
+            } else {
+                const cat = weaponsData.categories.find(c => c.id === currentCategory);
+                if (cat) weapons = cat.weapons.map(w => ({...w, categoryName: cat.name, categoryIcon: cat.icon}));
+            }
+
+            if (search) {
+                weapons = weapons.filter(w =>
+                    w.name.toLowerCase().includes(search) ||
+                    w.fullName.toLowerCase().includes(search) ||
+                    w.description.toLowerCase().includes(search)
+                );
+            }
+
+            if (!weapons.length) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">
+                        <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+                        <p>没有找到匹配的枪械</p>
+                    </div>`;
+                return;
+            }
+
+            const ATTRS = ['fireRate','damage','accuracy','range'];
+            const ATTR_COLS = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6'];
+
+            container.innerHTML = weapons.map(w => `
+                <div class="weapon-card" onclick="showWeaponDetail('${w.id}')">
+                    <div class="weapon-card-icon">${w.name.charAt(0)}</div>
+                    <div class="weapon-card-info">
+                        <span class="type-badge ${w.type}">${TYPE_NAMES[w.type] || w.type}</span>
+                        <h3>${w.name}</h3>
+                        <p>${w.description}</p>
+                    </div>
+                    <div class="weapon-card-stats">
+                        ${ATTRS.map((attr, i) => `
+                            <div class="mini-stat">
+                                <span class="mini-stat-label">${ATTR_NAMES[attr]}</span>
+                                <div class="mini-stat-bar">
+                                    <div class="mini-stat-fill" style="width:${w[attr]}%;background:${ATTR_COLS[i]};"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showWeaponDetail(weaponId) {
+            currentWeaponId = weaponId;
+            let weapon = null, category = null;
+            for (const cat of weaponsData.categories) {
+                const found = cat.weapons.find(w => w.id === weaponId);
+                if (found) { weapon = found; category = cat; break; }
+            }
+            if (!weapon) return;
+            currentWeaponData = weapon;
+
+            const rating = getWeaponRating(weapon);
+            const ATTRS = ['fireRate','damage','accuracy','range'];
+
+            // 配件槽（基于枪械类型推荐）
+            const slots = getSlotsForType(weapon.type);
+
+            document.getElementById('modalWeaponTitle').textContent = `${weapon.name} · ${weapon.fullName}`;
+            document.getElementById('modalWeaponBody').innerHTML = `
+                <!-- 英雄区 -->
+                <div class="modal-weapon-hero">
+                    <div class="modal-weapon-icon">${weapon.name.charAt(0)}</div>
+                    <div class="modal-weapon-name">${weapon.name}</div>
+                    <div class="modal-weapon-fullname">${weapon.fullName}</div>
+                    <div class="type-badge ${weapon.type}" style="display:inline-block;margin-top:8px;">${TYPE_NAMES[weapon.type] || weapon.type}</div>
+                    <p class="modal-weapon-desc">${weapon.description}</p>
+                    <div class="rating-area">
+                        <div class="score-big">${rating}</div>
+                        <div class="score-label">综合评分</div>
+                    </div>
+                </div>
+
+                <!-- 属性面板 -->
+                <div class="modal-section-title">属性面板</div>
+                ${ATTRS.map(attr => `
+                    <div class="attr-row">
+                        <div class="attr-label">${ATTR_NAMES[attr]}</div>
+                        <div class="attr-bar-track">
+                            <div class="attr-bar-fill" style="width:${weapon[attr]}%;background:${ATTR_COLORS[attr]};"></div>
+                        </div>
+                        <div class="attr-value" style="color:${ATTR_COLORS[attr]};">${weapon[attr]}</div>
+                    </div>
+                `).join('')}
+
+                <!-- 配件槽 -->
+                <div class="modal-section-title">配件槽位</div>
+                <div class="slot-grid">
+                    ${slots.map(s => `
+                        <div class="slot-item">
+                            <span class="slot-item-icon">${s.icon}</span>
+                            <div>
+                                <div class="slot-item-name">${s.name}</div>
+                                <div class="slot-item-slot">${s.slot}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- 建议 -->
+                <div class="modal-section-title">使用建议</div>
+                <p style="font-size:14px;color:var(--text-muted);line-height:1.8;">
+                    ${getWeaponTips(weapon)}
+                </p>
+            `;
+
+            document.getElementById('weaponModal').classList.add('active');
+        }
+
+        function getSlotsForType(type) {
+            const base = [
+                {slot:'枪口', name:'消音器 / 补偿器', icon:'🔇'},
+                {slot:'枪管', name:'长枪管 / 短枪管', icon:'🔧'},
+                {slot:'弹匣', name:'标准 / 加长弹匣', icon:'📦'},
+                {slot:'瞄具', name:'红点 / 全息 / 瞄准镜', icon:'🔭'},
+            ];
+            const extra = {
+                'AR':  [{slot:'前握把',name:'垂直 / 角握把',icon:'✋'},{slot:'枪托',name:'伸缩 / 固定枪托',icon:'🦴'}],
+                'SMG': [{slot:'前握把',name:'激光瞄准器',icon:'🔦'},{slot:'枪托',name:'折叠 / 伸缩枪托',icon:'🦴'}],
+                'SR':  [{slot:'前握把',name:'双脚架',icon:'🦵'},{slot:'枪托',name:'固定 / 伸缩枪托',icon:'🦴'},{slot:'弹药',name:'马格南 / 狙击弹',icon:'💎'}],
+                'SG':  [{slot:'枪口',name:'扼流器 / 消音器',icon:'🔇'},{slot:'枪托',name:'伸缩枪托',icon:'🦴'}],
+                'LMG': [{slot:'前握把',name:'双脚架 / 垂直握把',icon:'🦵'},{slot:'枪托',name:'固定枪托',icon:'🦴'}],
+                'Pistol': [{slot:'枪口',name:'消音器 / 枪口 brake',icon:'🔇'},{slot:'瞄具',name:'红点 / 无',icon:'🔭'}],
+                'Special': [{slot:'弹药',name:'特殊弹药',icon:'💎'},{slot:'配件',name:'根据武器类型',icon:'🔧'}],
+            };
+            return [...base, ...(extra[type] || [])];
+        }
+
+        function getWeaponTips(weapon) {
+            const tips = {
+                'AR': '突击步枪是全能型武器，适合各种距离。中距离是优势区间，近距离需要配合腰射。配件建议优先提升稳定性和后坐力控制。',
+                'SMG': '冲锋枪射速快、近距离伤害高，适合室内CQB。配件优先消音器和激光瞄准器，提升腰射精度。需要注意弹药管理和换弹时机。',
+                'SR': '狙击枪需要耐心和预判，建议配合高倍镜使用。架枪时选择对方必经之路，等待时机。冲锋狙需要练习瞬镜技巧。',
+                'SG': '霰弹枪近距离秒杀，但射程极短。需要贴脸才能发挥威力，建议配合无声脚步。弹容量有限，注意节省弹药。',
+                'LMG': '机枪提供持续火力压制，适合守点和进攻推进。弹药量大是优势，但移速较慢。配件建议加装双脚架提升稳定性。',
+                'Pistol': '手枪是备用武器，在主武器没子弹时发挥作用。射速快的适合近距离，精准的适合中距离补枪。',
+                'Special': '特殊武器有独特用法，根据武器特性选择战术。'
+            };
+            return tips[weapon.type] || '根据不同场景灵活调整配置和战术。';
+        }
+
+        function closeWeaponModal() { document.getElementById('weaponModal').classList.remove('active'); }
+
+        function createLoadoutFromWeapon() {
+            closeWeaponModal();
+            window.location.href = `loadouts.html`;
+        }
+
+        loadWeapons();
+
+        document.getElementById('weaponModal').addEventListener('click', e => {
+            if (e.target.classList.contains('modal-overlay')) closeWeaponModal();
+        });
+    </script>
+</body>
+</html>
