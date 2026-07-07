@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地图点位 - 跑刀鼠鼠</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ===== 地图页样式 ===== */
+        .maps-page { max-width: 1100px; margin: 0 auto; padding: 40px 20px 60px; }
+
+        /* 官方地图卡片 */
+        .official-maps {
+            margin-bottom: 48px;
+        }
+        .section-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-label::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .official-map-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--dark-light);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+            display: grid;
+            grid-template-columns: 160px 1fr auto;
+            gap: 0;
+        }
+        .official-map-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.15);
+        }
+        .official-map-thumb {
+            background: linear-gradient(135deg, #1a365d 0%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 8px;
+        }
+        .official-map-thumb-icon { font-size: 48px; }
+        .official-map-thumb-name { font-size: 14px; font-weight: 700; color: var(--text); }
+        .official-map-thumb-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .official-map-info {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .official-map-info h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .official-map-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .official-map-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .map-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(99,102,241,0.1);
+            color: #818cf8;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+        .official-map-action {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .official-map-action .btn {
+            white-space: nowrap;
+        }
+
+        /* 攻略信息区 */
+        .strategy-section { margin-top: 48px; }
+        .strategy-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .strategy-tab {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--dark-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .strategy-tab:hover { border-color: var(--primary); color: var(--text); }
+        .strategy-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        /* 点位列表 */
+        .marker-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .marker-card {
+            background: var(--bg-card);
+            border: 1px solid var(--dark-light);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.2s;
+        }
+        .marker-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .marker-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .marker-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .marker-icon.loot { background: rgba(76,175,80,0.15); color: #4CAF50; }
+        .marker-icon.tactical { background: rgba(33,150,243,0.15); color: #2196F3; }
+        .marker-icon.route { background: rgba(255,152,0,0.15); color: #FF9800; }
+        .marker-icon.danger { background: rgba(244,67,54,0.15); color: #F44336; }
+        .marker-icon.spawn { background: rgba(156,39,176,0.15); color: #9C27B0; }
+        .marker-icon.combat { background: rgba(255,87,34,0.15); color: #FF5722; }
+        .marker-name { font-size: 15px; font-weight: 700; }
+        .marker-category {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+        .marker-category.loot { background:rgba(76,175,80,0.15);color:#4CAF50; }
+        .marker-category.tactical { background:rgba(33,150,243,0.15);color:#2196F3; }
+        .marker-category.route { background:rgba(255,152,0,0.15);color:#FF9800; }
+        .marker-category.danger { background:rgba(244,67,54,0.15);color:#F44336; }
+        .marker-category.spawn { background:rgba(156,39,176,0.15);color:#9C27B0; }
+        .marker-category.combat { background:rgba(255,87,34,0.15);color:#FF5722; }
+        .marker-tips { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+        .marker-zone { font-size: 12px; color: var(--text-muted); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--dark-light); }
+
+        /* 图例 */
+        .legend-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.loot { background: #4CAF50; }
+        .legend-dot.tactical { background: #2196F3; }
+        .legend-dot.route { background: #FF9800; }
+        .legend-dot.danger { background: #F44336; }
+        .legend-dot.spawn { background: #9C27B0; }
+        .legend-dot.combat { background: #FF5722; }
+
+        /* 官方提示 */
+        .official-notice {
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .official-notice-icon { font-size: 20px; flex-shrink: 0; }
+        .official-notice strong { color: var(--text); }
+
+        @media (max-width: 768px) {
+            .official-map-card { grid-template-columns: 1fr; }
+            .official-map-action { padding: 16px; }
+            .official-map-action .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🐭</span>
+                <span class="logo-text">跑刀鼠鼠</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="maps.html" class="nav-link active">地图点位</a>
+                <a href="loadouts.html" class="nav-link">改枪码</a>
+                <a href="weapons.html" class="nav-link">枪械图鉴</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="maps-page">
+        <!-- 页面标题 -->
+        <div style="padding: 0 0 32px 0;">
+            <h1 class="page-title">🗺️ 地图点位</h1>
+            <p class="page-subtitle">官方地图工具 + 玩家攻略点位汇总</p>
+        </div>
+
+        <!-- 官方地图区 -->
+        <section class="official-maps">
+            <div class="section-label">🌐 官方地图工具</div>
+            <div class="official-notice">
+                <span class="official-notice-icon">💡</span>
+                <div>
+                    <strong>以下为《三角洲行动》官方地图工具</strong>，由腾讯游戏官方提供，支持查看物资点、出生点、撤离点坐标，
+                    以及烽火地带/全面战场多种模式地图。点击卡片跳转即可使用。
+                </div>
+            </div>
+
+            <!-- 官方地图卡片 -->
+            <div class="official-map-card">
+                <div class="official-map-thumb">
+                    <span class="official-map-thumb-icon">🏔️</span>
+                    <span class="official-map-thumb-name">零号大坝</span>
+                    <span class="official-map-thumb-type">烽火地带</span>
+                </div>
+                <div class="official-map-info">
+                    <h3>🌊 零号大坝</h3>
+                    <p>大型水坝建筑群，包含行政辖区地下区域。物资丰富、建筑密集，适合中距离交火。官方地图支持查看分层地图，可切换机密/绝密/永夜等多种难度。</p>
+                    <div class="official-map-tags">
+                        <span class="map-tag">🏗️ 建筑群</span>
+                        <span class="map-tag">💧 水域</span>
+                        <span class="map-tag">🔫 室内战</span>
+                    </div>
+                </div>
+                <div class="official-map-action">
+                    <a href="https://df.qq.com/cp/a20240729directory/" target="_blank" class="btn btn-primary">
+                        🌐 打开官方地图
+                    </a>
+                    <span style="font-size:12px;color:var(--text-muted);margin-top:8px;">腾讯官方工具</span>
+                </div>
+            </div>
+
+            <div class="official-map-card">
+                <div class="official-map-thumb">
+                    <span class="official-map-thumb-icon">🏔️</span>
+                    <span class="official-map-thumb-name">长弓溪谷</span>
+                    <span class="official-map-thumb-type">烽火地带</span>
+                </div>
+                <div class="official-map-info">
+                    <h3>🏔️ 长弓溪谷</h3>
+                    <p>雪山峡谷地图，视野开阔、掩体相对较少。官方地图支持钻石皇后酒店分层查看，适合狙击和对枪。需注意开阔地带的暴露风险。</p>
+                    <div class="official-map-tags">
+                        <span class="map-tag">❄️ 雪地</span>
+                        <span class="map-tag">🏔️ 峡谷</span>
+                        <span class="map-tag">🔭 远程战</span>
+                    </div>
+                </div>
+                <div class="official-map-action">
+                    <a href="https://df.qq.com/cp/a20240729directory/" target="_blank" class="btn btn-primary">
+                        🌐 打开官方地图
+                    </a>
+                    <span style="font-size:12px;color:var(--text-muted);margin-top:8px;">腾讯官方工具</span>
+                </div>
+            </div>
+
+            <div class="official-map-card">
+                <div class="official-map-thumb">
+                    <span class="official-map-thumb-icon">🔬</span>
+                    <span class="official-map-thumb-name">航天基地</span>
+                    <span class="official-map-thumb-type">烽火地带</span>
+                </div>
+                <div class="official-map-info">
+                    <h3>🚀 航天基地</h3>
+                    <p>高科技航天设施，地图结构复杂、房间众多。绝密难度地图物资极为丰富，但风险也最高。官方地图支持多楼层切换，适合喜欢高风险高回报的玩家。</p>
+                    <div class="official-map-tags">
+                        <span class="map-tag">🚀 科技设施</span>
+                        <span class="map-tag">🏢 多楼层</span>
+                        <span class="map-tag">💎 高物资</span>
+                    </div>
+                </div>
+                <div class="official-map-action">
+                    <a href="https://df.qq.com/cp/a20240729directory/" target="_blank" class="btn btn-primary">
+                        🌐 打开官方地图
+                    </a>
+                    <span style="font-size:12px;color:var(--text-muted);margin-top:8px;">腾讯官方工具</span>
+                </div>
+            </div>
+
+            <div class="official-map-card">
+                <div class="official-map-thumb">
+                    <span class="official-map-thumb-icon">🏚️</span>
+                    <span class="official-map-thumb-name">巴克什</span>
+                    <span class="official-map-thumb-type">烽火地带</span>
+                </div>
+                <div class="official-map-info">
+                    <h3>🏚️ 巴克什</h3>
+                    <p>中东风格城镇，砖石建筑与街道交织。皇家博物馆区域是热门落点，适合喜欢城区战的玩家。官方地图支持机密/绝密难度切换，可查看巴别塔区域坐标。</p>
+                    <div class="official-map-tags">
+                        <span class="map-tag">🏚️ 城镇</span>
+                        <span class="map-tag">🏛️ 博物馆</span>
+                        <span class="map-tag">🔫 城区战</span>
+                    </div>
+                </div>
+                <div class="official-map-action">
+                    <a href="https://df.qq.com/cp/a20240729directory/" target="_blank" class="btn btn-primary">
+                        🌐 打开官方地图
+                    </a>
+                    <span style="font-size:12px;color:var(--text-muted);margin-top:8px;">腾讯官方工具</span>
+                </div>
+            </div>
+
+            <div class="official-map-card">
+                <div class="official-map-thumb">
+                    <span class="official-map-thumb-icon">🏝️</span>
+                    <span class="official-map-thumb-name">潮汐监狱</span>
+                    <span class="official-map-thumb-type">烽火地带</span>
+                </div>
+                <div class="official-map-info">
+                    <h3>🏝️ 潮汐监狱</h3>
+                    <p>海岛监狱主题地图，有大量封闭房间和走廊。分层地图可查看各楼层结构，是目前最热门的落点之一。官方支持楼层切换，方便熟悉建筑布局。</p>
+                    <div class="official-map-tags">
+                        <span class="map-tag">🏝️ 海岛</span>
+                        <span class="map-tag">🏢 监狱</span>
+                        <span class="map-tag">🔫 CQB</span>
+                    </div>
+                </div>
+                <div class="official-map-action">
+                    <a href="https://df.qq.com/cp/a20240729directory/" target="_blank" class="btn btn-primary">
+                        🌐 打开官方地图
+                    </a>
+                    <span style="font-size:12px;color:var(--text-muted);margin-top:8px;">腾讯官方工具</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 玩家攻略区 -->
+        <section class="strategy-section">
+            <div class="section-label">📍 玩家攻略点位</div>
+
+            <!-- 图例 -->
+            <div class="legend-row">
+                <div class="legend-item"><span class="legend-dot loot"></span>物资点</div>
+                <div class="legend-item"><span class="legend-dot tactical"></span>战术点</div>
+                <div class="legend-item"><span class="legend-dot route"></span>路线</div>
+                <div class="legend-item"><span class="legend-dot danger"></span>危险区</div>
+                <div class="legend-item"><span class="legend-dot spawn"></span>出生点</div>
+                <div class="legend-item"><span class="legend-dot combat"></span>交火区</div>
+            </div>
+
+            <!-- 攻略标签筛选 -->
+            <div class="strategy-tabs">
+                <button class="strategy-tab active" data-map="all" onclick="switchMap('all')">📍 全部</button>
+                <button class="strategy-tab" data-map="havoc" onclick="switchMap('havoc')">🏗️ 哈维克</button>
+                <button class="strategy-tab" data-map="karkonoshe" onclick="switchMap('karkonoshe')">🏔️ 冈仁波齐</button>
+                <button class="strategy-tab" data-map="铮嵘" onclick="switchMap('铮嵘')">🌃 铮嵘工业区</button>
+            </div>
+
+            <!-- 点位列表 -->
+            <div id="markerList" class="marker-list"></div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>跑刀鼠鼠 · 三角洲行动攻略工具</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        let mapsData = null;
+        let currentMapId = 'all';
+
+        const CATEGORY_ICONS = {
+            'loot':'📦','tactical':'🎯','route':'🛤️','danger':'⚠️','spawn':'🏁','combat':'🔥'
+        };
+        const CATEGORY_NAMES = {
+            'loot':'物资点','tactical':'战术点','route':'路线','danger':'危险区','spawn':'出生点','combat':'交火区'
+        };
+
+        async function loadMaps() {
+            mapsData = await appUtils.loadJSON('data/maps.json');
+            if (!mapsData) { appUtils.showToast('加载地图数据失败','error'); return; }
+            renderMarkers();
+        }
+
+        function switchMap(mapId) {
+            currentMapId = mapId;
+            document.querySelectorAll('.strategy-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.map === mapId);
+            });
+            renderMarkers();
+        }
+
+        function renderMarkers() {
+            const container = document.getElementById('markerList');
+            let allMarkers = [];
+
+            mapsData.maps.forEach(map => {
+                if (currentMapId !== 'all' && map.id !== currentMapId) return;
+                map.zones.forEach(zone => {
+                    zone.markers.forEach(marker => {
+                        allMarkers.push({
+                            ...marker,
+                            zoneName: zone.name,
+                            mapName: map.name,
+                            mapId: map.id
+                        });
+                    });
+                });
+            });
+
+            if (!allMarkers.length) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);grid-column:1/-1;">
+                        <div style="font-size:48px;margin-bottom:16px;">🗺️</div>
+                        <p>没有找到点位信息</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = allMarkers.map(m => `
+                <div class="marker-card">
+                    <div class="marker-card-header">
+                        <div class="marker-icon ${m.category}">${CATEGORY_ICONS[m.category] || '📍'}</div>
+                        <span class="marker-name">${m.name}</span>
+                        <span class="marker-category ${m.category}">${CATEGORY_NAMES[m.category] || '点位'}</span>
+                    </div>
+                    <p class="marker-tips">💡 ${m.tips}</p>
+                    <div class="marker-zone">📍 ${m.zoneName} · ${m.mapName}</div>
+                </div>
+            `).join('');
+        }
+
+        loadMaps();
+    </script>
+</body>
+</html>
