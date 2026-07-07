@@ -1,0 +1,296 @@
+{
+  "maps": [
+    {
+      "id": "havoc",
+      "name": "哈维克",
+      "description": "中型战场，建筑密集，适合室内作战",
+      "size": "中型",
+      "players": "6v6",
+      "image": "havoc.jpg",
+      "zones": [
+        {
+          "id": "com-pound",
+          "name": "综合体",
+          "description": "核心建筑区域，物资丰富但战斗激烈",
+          "type": "hot",
+          "markers": [
+            {
+              "id": "h1",
+              "name": "A点仓库",
+              "x": 45,
+              "y": 30,
+              "category": "loot",
+              "tips": "高级物资刷新点，门口常有玩家蹲守"
+            },
+            {
+              "id": "h2",
+              "name": "B点塔楼",
+              "x": 60,
+              "y": 25,
+              "category": "tactical",
+              "tips": "高点视野好，狙击位"
+            },
+            {
+              "id": "h3",
+              "name": "地下通道",
+              "x": 35,
+              "y": 50,
+              "category": "route",
+              "tips": "连接东西两侧的安全路线"
+            },
+            {
+              "id": "h4",
+              "name": "C点平台",
+              "x": 55,
+              "y": 45,
+              "category": "combat",
+              "tips": "开阔区域，容易交火"
+            }
+          ]
+        },
+        {
+          "id": "industrial",
+          "name": "工业区",
+          "description": "工厂仓库区域，掩体多",
+          "type": "medium",
+          "markers": [
+            {
+              "id": "i1",
+              "name": "工厂大厅",
+              "x": 25,
+              "y": 60,
+              "category": "loot",
+              "tips": "中等物资刷新点"
+            },
+            {
+              "id": "i2",
+              "name": "集装箱区",
+              "x": 15,
+              "y": 70,
+              "category": "route",
+              "tips": "可利用集装箱掩护移动"
+            }
+          ]
+        },
+        {
+          "id": "residential",
+          "name": "居民区",
+          "description": "多层建筑，适合卡点防守",
+          "type": "medium",
+          "markers": [
+            {
+              "id": "r1",
+              "name": "公寓楼",
+              "x": 75,
+              "y": 35,
+              "category": "tactical",
+              "tips": "高点狙击位，注意屋顶"
+            },
+            {
+              "id": "r2",
+              "name": "街道",
+              "x": 80,
+              "y": 55,
+              "category": "danger",
+              "tips": "暴露区域，尽量快速通过"
+            }
+          ]
+        },
+        {
+          "id": "spawn-points",
+          "name": "出生点",
+          "description": "队伍初始位置",
+          "type": "spawn",
+          "markers": [
+            {
+              "id": "s1",
+              "name": "蓝方出生点",
+              "x": 10,
+              "y": 20,
+              "category": "spawn",
+              "tips": "蓝队起点"
+            },
+            {
+              "id": "s2",
+              "name": "红方出生点",
+              "x": 90,
+              "y": 80,
+              "category": "spawn",
+              "tips": "红队起点"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "karkonoshe",
+      "name": "冈仁波齐",
+      "description": "雪地地图，大范围开放区域，远距离作战",
+      "size": "大型",
+      "players": "8v8",
+      "image": "karkonoshe.jpg",
+      "zones": [
+        {
+          "id": "mountain",
+          "name": "雪山主峰",
+          "description": "制高点，可俯瞰全图",
+          "type": "hot",
+          "markers": [
+            {
+              "id": "k1",
+              "name": "山顶哨站",
+              "x": 50,
+              "y": 10,
+              "category": "tactical",
+              "tips": "最佳狙击位，但容易被针对"
+            },
+            {
+              "id": "k2",
+              "name": "滑雪场",
+              "x": 40,
+              "y": 25,
+              "category": "loot",
+              "tips": "高级物资点，建筑内"
+            }
+          ]
+        },
+        {
+          "id": "village",
+          "name": "村庄",
+          "description": "传统建筑群，适合室内战",
+          "type": "medium",
+          "markers": [
+            {
+              "id": "v1",
+              "name": "主教堂",
+              "x": 30,
+              "y": 50,
+              "category": "tactical",
+              "tips": "地标建筑，容易被围攻"
+            },
+            {
+              "id": "v2",
+              "name": "村庄入口",
+              "x": 25,
+              "y": 60,
+              "category": "danger",
+              "tips": "必经之路，注意埋伏"
+            }
+          ]
+        },
+        {
+          "id": "lake",
+          "name": "冰湖",
+          "description": "开阔冰面，无掩体",
+          "type": "danger",
+          "markers": [
+            {
+              "id": "l1",
+              "name": "湖心平台",
+              "x": 65,
+              "y": 55,
+              "category": "loot",
+              "tips": "物资丰富但极度危险"
+            },
+            {
+              "id": "l2",
+              "name": "冰面通道",
+              "x": 55,
+              "y": 45,
+              "category": "route",
+              "tips": "穿湖捷径，小心脚下"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "铮嵘",
+      "name": "铮嵘工业区",
+      "description": "夜间工业场景，视觉干扰多",
+      "size": "中型",
+      "players": "6v6",
+      "image": "night_industrial.jpg",
+      "zones": [
+        {
+          "id": "factory",
+          "name": "主工厂",
+          "description": "核心工业区",
+          "type": "hot",
+          "markers": [
+            {
+              "id": "n1",
+              "name": "生产线",
+              "x": 45,
+              "y": 40,
+              "category": "loot",
+              "tips": "物资密集区域"
+            },
+            {
+              "id": "n2",
+              "name": "天车",
+              "x": 50,
+              "y": 30,
+              "category": "tactical",
+              "tips": "制高点，注意安全"
+            }
+          ]
+        },
+        {
+          "id": "warehouse",
+          "name": "仓库区",
+          "description": "集装箱与仓库",
+          "type": "medium",
+          "markers": [
+            {
+              "id": "w1",
+              "name": "大型仓库",
+              "x": 25,
+              "y": 55,
+              "category": "loot",
+              "tips": "物资中等，掩体多"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "markerCategories": [
+    {
+      "id": "loot",
+      "name": "物资点",
+      "icon": "📦",
+      "color": "#4CAF50"
+    },
+    {
+      "id": "tactical",
+      "name": "战术点",
+      "icon": "🎯",
+      "color": "#2196F3"
+    },
+    {
+      "id": "route",
+      "name": "路线",
+      "icon": "🛤️",
+      "color": "#FF9800"
+    },
+    {
+      "id": "danger",
+      "name": "危险区",
+      "icon": "⚠️",
+      "color": "#F44336"
+    },
+    {
+      "id": "spawn",
+      "name": "出生点",
+      "icon": "🏁",
+      "color": "#9C27B0"
+    },
+    {
+      "id": "vehicle",
+      "name": "载具点",
+      "icon": "🚗",
+      "color": "#00BCD4"
+    }
+  ]
+}
