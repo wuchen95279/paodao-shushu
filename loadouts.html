@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>改枪码 - 跑刀鼠鼠</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ===== 游戏内风格附加样式 ===== */
+        
+        /* 评分大字 */
+        .score-big {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        
+        .score-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* 标签 */
+        .tag-game {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .tag-game.tag-hot { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .tag-game.tag-new { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+        .tag-game.tag-spd { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3); }
+        .tag-game.tag-rec { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+        .tag-game.tag-def { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+        .tag-game.tag-def2 { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+        .tag-game.tag-def3 { background: rgba(14,165,233,0.15); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+        .tag-game.tag-def4 { background: rgba(236,72,153,0.15); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); }
+        .tag-game.tag-def5 { background: rgba(20,184,166,0.15); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.3); }
+
+        /* 改枪码框 */
+        .code-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 16px 0;
+        }
+        .code-text {
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #a5b4fc;
+            letter-spacing: 0.5px;
+            flex: 1;
+            word-break: break-all;
+        }
+        .code-copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .code-copy-btn:hover { background: var(--primary-dark); }
+        .code-copy-btn.copied { background: #22c55e; }
+
+        /* 属性表 */
+        .stats-table {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0;
+            background: var(--dark);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--dark-light);
+        }
+        .stats-row {
+            display: contents;
+        }
+        .stats-name {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: var(--text);
+            border-bottom: 1px solid var(--dark-light);
+            display: flex;
+            align-items: center;
+        }
+        .stats-value {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: right;
+            border-bottom: 1px solid var(--dark-light);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .stats-row:last-child .stats-name,
+        .stats-row:last-child .stats-value {
+            border-bottom: none;
+        }
+        .stat-change {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .stat-change.positive { background: rgba(34,197,94,0.15); color: #22c55e; }
+        .stat-change.negative { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .stat-change.neutral { background: rgba(148,163,184,0.15); color: #94a3b8; }
+
+        /* 配件网格 */
+        .attach-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .attach-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--dark);
+            border: 1px solid var(--dark-light);
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+        .attach-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .attach-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .attach-slot {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .attach-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 武器大图区 */
+        .weapon-showcase {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .weapon-showcase::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .weapon-img-placeholder {
+            width: 200px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            background: rgba(99,102,241,0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+        .weapon-showcase-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 卡片预览（列表样式） */
+        .loadout-list-item {
+            background: var(--bg-card);
+            border: 1px solid var(--dark-light);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+        }
+        .loadout-list-item:hover {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.05);
+            transform: translateX(4px);
+        }
+        .loadout-list-info h3 { font-size: 17px; margin-bottom: 4px; }
+        .loadout-list-info .author { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .loadout-list-score {
+            text-align: right;
+        }
+
+        /* 详情模态框 */
+        .modal-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .modal-weapon-name {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .modal-author {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .modal-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            margin-top: 24px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-section-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 操作按钮组 */
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .action-btns .btn { flex: 1; min-width: 100px; justify-content: center; }
+
+        /* 列表页 */
+        .loadouts-page { max-width: 900px; margin: 0 auto; padding: 40px 20px 60px; }
+        .loadouts-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .loadouts-toolbar .search-box { flex: 1; min-width: 200px; }
+
+        @media (max-width: 600px) {
+            .loadout-list-item { grid-template-columns: 1fr; gap: 12px; }
+            .loadout-list-score { text-align: left; }
+            .score-big { font-size: 28px; }
+            .attach-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🐭</span>
+                <span class="logo-text">跑刀鼠鼠</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="maps.html" class="nav-link">地图点位</a>
+                <a href="loadouts.html" class="nav-link active">改枪码</a>
+                <a href="weapons.html" class="nav-link">枪械图鉴</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="loadouts-page">
+        <!-- 页面标题 -->
+        <div class="page-header" style="padding: 0 0 32px 0; background: none;">
+            <h1 class="page-title">🔧 改枪码</h1>
+            <p class="page-subtitle">搭配详情 · 评分 · 改枪码一键复制</p>
+        </div>
+
+        <!-- 工具栏 -->
+        <div class="loadouts-toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索武器名、标签或作者..." oninput="filterLoadouts()">
+            </div>
+            <button class="btn btn-primary" onclick="openAddModal()">
+                <span>➕</span> 添加配置
+            </button>
+            <button class="btn btn-secondary" onclick="exportLoadouts()">
+                <span>📤</span> 导出
+            </button>
+        </div>
+
+        <!-- 列表 -->
+        <div id="loadoutList"></div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal" style="max-width: 680px;">
+            <div class="modal-header">
+                <h3 class="modal-title">搭配详情</h3>
+                <button class="modal-close" onclick="closeDetailModal()">×</button>
+            </div>
+            <div class="modal-body" id="detailBody"></div>
+            <div class="modal-footer" id="detailFooter"></div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑模态框 -->
+    <div class="modal-overlay" id="loadoutModal">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">添加改枪码</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="loadoutForm">
+                    <input type="hidden" id="loadoutId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">配置名称 *</label>
+                        <input type="text" class="form-input" id="loadoutName" required placeholder="例如：SVCH消音高初速满改版">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">选择枪械 *</label>
+                            <select class="form-select" id="weaponSelect" required onchange="updateAttachmentFields()">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">改枪码 *</label>
+                            <input type="text" class="form-input" id="loadoutCode" required placeholder="~开头，复制游戏内码">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">评分</label>
+                            <input type="number" class="form-input" id="loadoutScore" placeholder="如：462.4" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">作者</label>
+                            <input type="text" class="form-input" id="loadoutAuthor" placeholder="你的名字">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">标签（逗号分隔）</label>
+                        <input type="text" class="form-input" id="loadoutTags" placeholder="如：满改神器,新武器,射速消音">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">简介描述</label>
+                        <input type="text" class="form-input" id="loadoutDesc" placeholder="一句话描述这套配置的特点">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <textarea class="form-textarea" id="loadoutNotes" placeholder="详细的使用说明、适用场景..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveLoadout()">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>跑刀鼠鼠 · 三角洲行动攻略工具</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        let loadoutsData = null;
+        let weaponsData = null;
+        let currentDetailId = null;
+
+        const TAG_COLORS = ['tag-hot','tag-new','tag-spd','tag-rec','tag-def','tag-def2','tag-def3','tag-def4','tag-def5'];
+        const SLOT_ICONS = {
+            '枪口':'🔇','枪管':'🔧','护木':'🛡️','前握把':'✋','上机匣':'📐',
+            '瞄具座':'🔭','后握把':'🤛','弹匣':'📦','枪托':'🦴','后托':'✋',
+            '贴腮板':'🧱','瞄具':'🔭'
+        };
+
+        async function loadData() {
+            [loadoutsData, weaponsData] = await Promise.all([
+                appUtils.loadJSON('data/loadouts.json'),
+                appUtils.loadJSON('data/weapons.json')
+            ]);
+            if (!loadoutsData || !weaponsData) { appUtils.showToast('加载数据失败','error'); return; }
+            renderLoadouts();
+            populateWeaponSelect();
+        }
+
+        function getWeaponName(weaponId) {
+            for (const cat of weaponsData.categories) {
+                const w = cat.weapons.find(w => w.id === weaponId);
+                if (w) return w.name;
+            }
+            return weaponId;
+        }
+
+        function getTagClass(tag) {
+            const t = tag.toLowerCase();
+            if (t.includes('新') || t.includes('新武器')) return 'tag-new';
+            if (t.includes('爆') || t.includes('hot') || t.includes('爆发')) return 'tag-hot';
+            if (t.includes('射速') || t.includes('速度') || t.includes('spd')) return 'tag-spd';
+            if (t.includes('推荐') || t.includes('新手') || t.includes('rec')) return 'tag-rec';
+            return TAG_COLORS[Math.abs(hashCode(tag)) % TAG_COLORS.length];
+        }
+
+        function hashCode(str) {
+            let h = 0;
+            for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i);
+            return h;
+        }
+
+        function renderLoadouts(filter = '') {
+            const container = document.getElementById('loadoutList');
+            const fl = filter.toLowerCase();
+            const filtered = loadoutsData.loadouts.filter(lo => {
+                if (!fl) return true;
+                return lo.name.toLowerCase().includes(fl) ||
+                       lo.weaponId.toLowerCase().includes(fl) ||
+                       getWeaponName(lo.weaponId).toLowerCase().includes(fl) ||
+                       (lo.author && lo.author.toLowerCase().includes(fl)) ||
+                       (lo.tags && lo.tags.some(t => t.toLowerCase().includes(fl)));
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">
+                        <div style="font-size:48px;margin-bottom:16px;">🔧</div>
+                        <p>${filter ? '没有找到匹配的改枪码' : '还没有改枪码，点击上方按钮添加第一个！'}</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(lo => `
+                <div class="loadout-list-item" onclick="showDetail('${lo.id}')">
+                    <div class="loadout-list-info">
+                        <h3>${lo.name}</h3>
+                        <div class="author">🎯 ${getWeaponName(lo.weaponId)} · 👤 ${lo.author || '匿名'}</div>
+                        <div>${(lo.tags||[]).map(t => `<span class="tag-game ${getTagClass(t)}">${t}</span>`).join('')}</div>
+                    </div>
+                    <div style="text-align:center;min-width:80px;">
+                        <div class="score-big">${lo.score || '?'}</div>
+                        <div class="score-label">评分</div>
+                    </div>
+                    <div style="text-align:right;font-size:20px;">→</div>
+                </div>
+            `).join('');
+        }
+
+        function filterLoadouts() {
+            renderLoadouts(document.getElementById('searchInput').value);
+        }
+
+        function showDetail(id) {
+            currentDetailId = id;
+            const lo = loadoutsData.loadouts.find(l => l.id === id);
+            if (!lo) return;
+
+            const weaponName = getWeaponName(lo.weaponId);
+
+            // 改枪码复制
+            const codeCopyBtn = lo.code ? `
+                <button class="code-copy-btn" id="codeCopyBtn" onclick="copyCode('${lo.code.replace(/'/g,"\\'")}')">📋 复制</button>` : '';
+
+            // 配件网格
+            const attachGrid = (lo.attachments && lo.attachments.length > 0)
+                ? `<div class="attach-grid">${lo.attachments.map(a => `
+                    <div class="attach-item">
+                        <span class="attach-icon">${a.icon || SLOT_ICONS[a.slot] || '🔧'}</span>
+                        <div class="attach-info">
+                            <div class="attach-slot">${a.slot}</div>
+                            <div class="attach-name">${a.name}</div>
+                        </div>
+                    </div>`).join('')}</div>`
+                : '<p style="color:var(--text-muted);font-size:14px;">暂无配件信息</p>';
+
+            // 属性表
+            const statsTable = (lo.stats && Object.keys(lo.stats).length > 0)
+                ? `<div class="stats-table">${Object.entries(lo.stats).map(([name, s]) => {
+                    const ch = s.change || 0;
+                    const chClass = ch > 0 ? 'positive' : ch < 0 ? 'negative' : 'neutral';
+                    const chText = ch > 0 ? `+${ch}` : ch === 0 ? '±0' : `${ch}`;
+                    return `<div class="stats-row">
+                        <div class="stats-name">${name}</div>
+                        <div class="stats-value">
+                            ${s.base}
+                            <span class="stat-change ${chClass}">(${chText})</span>
+                        </div>
+                    </div>`;
+                }).join('')}</div>`
+                : '';
+
+            document.getElementById('detailBody').innerHTML = `
+                <!-- 武器大图区 -->
+                <div class="weapon-showcase">
+                    <div class="weapon-img-placeholder">${weaponName.charAt(0)}</div>
+                    <div class="weapon-showcase-name">${lo.name}</div>
+                    ${lo.score ? `<div class="score-big">${lo.score}</div><div class="score-label">评分</div>` : ''}
+                </div>
+
+                <!-- 标签 -->
+                <div>${(lo.tags||[]).map(t => `<span class="tag-game ${getTagClass(t)}">${t}</span>`).join('')}</div>
+
+                <!-- 作者 -->
+                <div style="margin-top:12px;font-size:13px;color:var(--text-muted);">
+                    👤 ${lo.author || '匿名'} · 📅 ${lo.createdAt || ''}
+                </div>
+
+                <!-- 简介 -->
+                ${lo.description ? `<p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.7;">${lo.description}</p>` : ''}
+
+                <!-- 改枪码 -->
+                ${lo.code ? `
+                <div class="modal-section-title">改枪码</div>
+                <div class="code-box">
+                    <span class="code-text">${lo.code}</span>
+                    ${codeCopyBtn}
+                </div>` : ''}
+
+                <!-- 配件 -->
+                <div class="modal-section-title">配件搭配</div>
+                ${attachGrid}
+
+                <!-- 属性 -->
+                ${statsTable ? `<div class="modal-section-title">改装属性</div>${statsTable}` : ''}
+
+                <!-- 备注 -->
+                ${lo.notes ? `
+                <div class="modal-section-title">备注</div>
+                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;">${lo.notes}</p>` : ''}
+            `;
+
+            document.getElementById('detailFooter').innerHTML = `
+                <div class="action-btns">
+                    ${lo.code ? `<button class="btn btn-primary" onclick="copyCode('${lo.code.replace(/'/g,"\\'")}')">📋 复制改枪码</button>` : ''}
+                    <button class="btn btn-secondary" onclick="editCurrentLoadout()">✏️ 编辑</button>
+                    <button class="btn btn-danger" onclick="deleteCurrentLoadout()">🗑️ 删除</button>
+                </div>
+            `;
+
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function copyCode(code) {
+            appUtils.copyToClipboard(code);
+            const btn = document.getElementById('codeCopyBtn');
+            if (btn) { btn.textContent = '✅ 已复制'; btn.classList.add('copied'); setTimeout(() => { btn.textContent='📋 复制'; btn.classList.remove('copied'); }, 1500); }
+        }
+
+        function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+
+        function editCurrentLoadout() {
+            const lo = loadoutsData.loadouts.find(l => l.id === currentDetailId);
+            if (!lo) return;
+            closeDetailModal();
+            openEditModal(lo);
+        }
+
+        function openEditModal(lo) {
+            document.getElementById('modalTitle').textContent = '编辑改枪码';
+            document.getElementById('loadoutId').value = lo.id;
+            document.getElementById('loadoutName').value = lo.name;
+            document.getElementById('weaponSelect').value = lo.weaponId;
+            document.getElementById('loadoutCode').value = lo.code || '';
+            document.getElementById('loadoutScore').value = lo.score || '';
+            document.getElementById('loadoutAuthor').value = lo.author || '';
+            document.getElementById('loadoutTags').value = (lo.tags||[]).join(',');
+            document.getElementById('loadoutDesc').value = lo.description || '';
+            document.getElementById('loadoutNotes').value = lo.notes || '';
+            document.getElementById('loadoutModal').classList.add('active');
+        }
+
+        function deleteCurrentLoadout() {
+            if (!confirm('确定要删除这个改枪码吗？')) return;
+            const idx = loadoutsData.loadouts.findIndex(l => l.id === currentDetailId);
+            if (idx !== -1) {
+                loadoutsData.loadouts.splice(idx, 1);
+                saveAndReload();
+                closeDetailModal();
+                appUtils.showToast('已删除', 'success');
+            }
+        }
+
+        function populateWeaponSelect() {
+            const sel = document.getElementById('weaponSelect');
+            let opts = '<option value="">请选择</option>';
+            weaponsData.categories.forEach(cat => {
+                opts += `<optgroup label="${cat.icon} ${cat.name}">`;
+                cat.weapons.forEach(w => { opts += `<option value="${w.id}">${w.name} - ${w.fullName}</option>`; });
+                opts += '</optgroup>';
+            });
+            sel.innerHTML = opts;
+        }
+
+        function updateAttachmentFields() {} // 占位，兼容旧代码
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '添加改枪码';
+            document.getElementById('loadoutForm').reset();
+            document.getElementById('loadoutId').value = '';
+            document.getElementById('loadoutModal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('loadoutModal').classList.remove('active'); }
+
+        function saveLoadout() {
+            const form = document.getElementById('loadoutForm');
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+
+            const loadout = {
+                id: document.getElementById('loadoutId').value || appUtils.generateId(),
+                weaponId: document.getElementById('weaponSelect').value,
+                name: document.getElementById('loadoutName').value.trim(),
+                code: document.getElementById('loadoutCode').value.trim(),
+                score: parseFloat(document.getElementById('loadoutScore').value) || 0,
+                author: document.getElementById('loadoutAuthor').value.trim() || '跑刀鼠鼠',
+                tags: document.getElementById('loadoutTags').value.split(',').map(t=>t.trim()).filter(t=>t),
+                description: document.getElementById('loadoutDesc').value.trim(),
+                notes: document.getElementById('loadoutNotes').value.trim(),
+                createdAt: appUtils.formatDate(new Date()),
+                attachments: [],
+                stats: {}
+            };
+
+            const existing = loadoutsData.loadouts.findIndex(l => l.id === loadout.id);
+            if (existing !== -1) loadoutsData.loadouts[existing] = loadout;
+            else loadoutsData.loadouts.unshift(loadout);
+
+            saveAndReload();
+            closeModal();
+            appUtils.showToast('保存成功！', 'success');
+        }
+
+        function saveAndReload() {
+            const dataStr = JSON.stringify(loadoutsData, null, 2);
+            // 浏览器端无法直接写文件，提示用户下载
+            const blob = new Blob([dataStr], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'loadouts.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            renderLoadouts();
+        }
+
+        function exportLoadouts() {
+            const dataStr = JSON.stringify(loadoutsData, null, 2);
+            appUtils.copyToClipboard(dataStr);
+        }
+
+        loadData();
+
+        // 点击外部关闭
+        document.getElementById('detailModal').addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) closeDetailModal(); });
+        document.getElementById('loadoutModal').addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) closeModal(); });
+    </script>
+</body>
+</html>
