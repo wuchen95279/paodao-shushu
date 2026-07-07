@@ -6,71 +6,19 @@
     <title>枪械图鉴 - 跑刀鼠鼠</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* ===== 游戏内风格 ===== */
         .weapons-page { max-width: 1100px; margin: 0 auto; padding: 40px 20px 60px; }
-
-        /* 列表筛选 */
-        .weapons-filters {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-bottom: 28px;
-        }
-        .filter-btn {
-            padding: 9px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--dark-light);
-            border-radius: 8px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            font-weight: 500;
-        }
+        .weapons-filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 28px; }
+        .filter-btn { padding: 9px 18px; background: var(--bg-card); border: 1px solid var(--dark-light); border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 500; }
         .filter-btn:hover { border-color: var(--primary); color: var(--text); }
         .filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-
+        
         /* 武器卡片 */
-        .weapon-card {
-            background: var(--bg-card);
-            border: 1px solid var(--dark-light);
-            border-radius: 14px;
-            padding: 20px 22px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: grid;
-            grid-template-columns: 60px 1fr auto;
-            gap: 20px;
-            align-items: center;
-        }
-        .weapon-card:hover {
-            border-color: var(--primary);
-            background: rgba(99,102,241,0.05);
-            transform: translateX(4px);
-            box-shadow: 0 4px 20px rgba(99,102,241,0.15);
-        }
-        .weapon-card-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(99,102,241,0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            border: 1px solid rgba(99,102,241,0.2);
-        }
-        .weapon-card-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
-        .weapon-card-info .type-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+        .weapon-card { background: var(--bg-card); border: 1px solid var(--dark-light); border-radius: 14px; padding: 20px 22px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; display: grid; grid-template-columns: 64px 1fr auto; gap: 20px; align-items: center; }
+        .weapon-card:hover { border-color: var(--primary); background: rgba(99,102,241,0.05); transform: translateX(4px); box-shadow: 0 4px 20px rgba(99,102,241,0.15); }
+        .weapon-card-icon { width: 64px; height: 64px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 1px solid rgba(99,102,241,0.2); overflow: hidden; }
+        .weapon-card-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .weapon-card-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .weapon-card-info .type-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 6px; }
         .type-badge.AR  { background:rgba(99,102,241,0.15); color:#818cf8; }
         .type-badge.SMG { background:rgba(14,165,233,0.15); color:#38bdf8; }
         .type-badge.SR  { background:rgba(168,85,247,0.15); color:#c084fc; }
@@ -79,172 +27,83 @@
         .type-badge.Pistol { background:rgba(34,197,94,0.15); color:#4ade80; }
         .type-badge.Special { background:rgba(236,72,153,0.15); color:#f472b6; }
         .weapon-card-info p { font-size: 13px; color: var(--text-muted); }
-        .weapon-card-stats { text-align: right; min-width: 140px; }
-        .weapon-card-stats .mini-stat {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        .weapon-card-stats .mini-stat-label { color: var(--text-muted); }
-        .weapon-card-stats .mini-stat-bar {
-            width: 80px;
-            height: 4px;
-            background: var(--dark);
-            border-radius: 2px;
-            margin-left: 8px;
-            flex-shrink: 0;
-        }
-        .weapon-card-stats .mini-stat-fill {
-            height: 100%;
-            border-radius: 2px;
-        }
-
+        
+        /* 标签 */
+        .weapon-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .weapon-tag { padding: 2px 8px; background: var(--dark); border-radius: 4px; font-size: 11px; color: #f0c040; border: 1px solid rgba(240,192,64,0.2); }
+        
+        /* 卡片右侧 */
+        .weapon-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 160px; }
+        .weapon-rating-badge { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .weapon-rating-label { font-size: 11px; color: var(--text-muted); }
+        .weapon-code-badge { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); border-radius: 6px; font-size: 12px; color: #818cf8; cursor: pointer; transition: all 0.2s; }
+        .weapon-code-badge:hover { background: rgba(99,102,241,0.2); }
+        .weapon-code-badge.copied { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.4); color: #4ade80; }
+        .weapon-stats-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+        .mini-stat { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .mini-stat-label { color: var(--text-muted); }
+        .mini-stat-bar { width: 60px; height: 4px; background: var(--dark); border-radius: 2px; margin-left: 8px; flex-shrink: 0; }
+        .mini-stat-fill { height: 100%; border-radius: 2px; }
+        
         /* 详情模态框 */
-        .modal-weapon-hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%);
-            border-radius: 16px;
-            padding: 48px 40px;
-            text-align: center;
-            margin-bottom: 28px;
-            position: relative;
-            overflow: hidden;
-        }
-        .modal-weapon-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .modal-weapon-icon {
-            width: 140px;
-            height: 90px;
-            margin: 0 auto 20px;
-            background: rgba(99,102,241,0.1);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            border: 1px solid rgba(99,102,241,0.2);
-        }
-        .modal-weapon-name {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        .modal-weapon-hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%); border-radius: 16px; padding: 48px 40px; text-align: center; margin-bottom: 28px; position: relative; overflow: hidden; }
+        .modal-weapon-hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 60%); pointer-events: none; }
+        .modal-weapon-image { width: 160px; height: 100px; margin: 0 auto 20px; background: rgba(99,102,241,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 48px; border: 1px solid rgba(99,102,241,0.2); overflow: hidden; }
+        .modal-weapon-image img { width: 100%; height: 100%; object-fit: contain; background: var(--dark); }
+        .modal-weapon-name { font-size: 32px; font-weight: 800; margin-bottom: 6px; background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .modal-weapon-fullname { font-size: 15px; color: var(--text-muted); margin-bottom: 4px; }
         .modal-weapon-desc { font-size: 14px; color: var(--text-muted); margin-top: 12px; line-height: 1.7; max-width: 500px; margin-left: auto; margin-right: auto; }
-
-        .modal-section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 12px;
-            margin-top: 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .modal-section-title::before {
-            content: '';
-            width: 3px;
-            height: 14px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* 属性进度条（详情页） */
-        .attr-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            gap: 12px;
-        }
-        .attr-label {
-            width: 90px;
-            font-size: 13px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-        .attr-bar-track {
-            flex: 1;
-            height: 8px;
-            background: var(--dark);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .attr-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-        .attr-value {
-            width: 36px;
-            font-size: 13px;
-            font-weight: 700;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
+        .modal-section-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 12px; margin-top: 24px; display: flex; align-items: center; gap: 8px; }
+        .modal-section-title::before { content: ''; width: 3px; height: 14px; background: var(--primary); border-radius: 2px; }
+        
+        /* 属性条 */
+        .attr-row { display: flex; align-items: center; margin-bottom: 12px; gap: 12px; }
+        .attr-label { width: 90px; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+        .attr-bar-track { flex: 1; height: 8px; background: var(--dark); border-radius: 4px; overflow: hidden; }
+        .attr-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .attr-value { width: 36px; font-size: 13px; font-weight: 700; text-align: right; flex-shrink: 0; }
+        
+        /* 改枪码 */
+        .code-display { background: var(--dark); border: 1px solid var(--dark-light); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .code-text { font-size: 16px; font-weight: 700; color: #f0c040; font-family: 'Courier New', monospace; letter-spacing: 1px; }
+        .code-copy-btn { padding: 6px 16px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 6px; color: #818cf8; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .code-copy-btn:hover { background: rgba(99,102,241,0.3); }
+        .code-copy-btn.copied { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.4); color: #4ade80; }
+        
+        /* 标签详情 */
+        .tags-display { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tag-chip { padding: 5px 12px; background: rgba(240,192,64,0.1); border: 1px solid rgba(240,192,64,0.25); border-radius: 20px; font-size: 13px; color: #f0c040; }
+        
+        /* 评分 */
+        .rating-detail { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; }
+        .rating-big { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6347 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .rating-max { font-size: 20px; color: var(--text-muted); }
+        
         /* 配件槽 */
-        .slot-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 8px;
-        }
-        .slot-item {
-            background: var(--dark);
-            border: 1px solid var(--dark-light);
-            border-radius: 8px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+        .slot-item { background: var(--dark); border: 1px solid var(--dark-light); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
         .slot-item-icon { font-size: 18px; }
         .slot-item-name { font-size: 12px; color: var(--text-muted); }
         .slot-item-slot { font-size: 13px; font-weight: 600; }
-
-        /* 武器类型颜色 */
-        .ATTR-damage  { background: #ef4444; }
+        
         .ATTR-fireRate { background: #f59e0b; }
+        .ATTR-damage { background: #ef4444; }
         .ATTR-accuracy { background: #3b82f6; }
         .ATTR-range { background: #8b5cf6; }
         .ATTR-stability { background: #22c55e; }
         .ATTR-mobility { background: #06b6d4; }
-
-        /* 评分 */
-        .score-big {
-            font-size: 42px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6347 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* 评分区 */
-        .rating-area {
-            text-align: center;
-            margin-top: 16px;
-        }
-        .rating-area .score-big { font-size: 28px; }
-        .rating-area .score-label { font-size: 12px; color: var(--text-muted); }
-
+        
+        /* 底部入口 */
+        .admin-entry { text-align: center; padding: 32px 0 0; }
+        .admin-entry a { color: var(--text-muted); text-decoration: none; font-size: 13px; }
+        .admin-entry a:hover { color: var(--primary); }
+        
         .action-btns { display: flex; gap: 10px; }
         .action-btns .btn { flex: 1; justify-content: center; }
-
+        
         @media (max-width: 600px) {
             .weapon-card { grid-template-columns: 50px 1fr; }
-            .weapon-card-stats { display: none; }
+            .weapon-card-right { display: none; }
         }
     </style>
 </head>
@@ -265,13 +124,11 @@
     </header>
 
     <div class="weapons-page">
-        <!-- 页面标题 -->
         <div style="padding: 0 0 32px 0;">
             <h1 class="page-title">🎯 枪械图鉴</h1>
-            <p class="page-subtitle">全武器数据 · 属性评分 · 配件搭配建议</p>
+            <p class="page-subtitle">29把武器 · 属性评分 · 改枪码一键复制</p>
         </div>
 
-        <!-- 筛选器 -->
         <div class="weapons-filters">
             <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">🎯 全部</button>
             <div id="categoryFilters"></div>
@@ -280,8 +137,11 @@
             </div>
         </div>
 
-        <!-- 武器列表 -->
         <div id="weaponList"></div>
+        
+        <div class="admin-entry">
+            <a href="admin.html">🔧 管理后台 · 添加/编辑武器</a>
+        </div>
     </div>
 
     <!-- 详情模态框 -->
@@ -314,31 +174,10 @@
         let currentWeaponId = null;
         let currentWeaponData = null;
 
-        const ATTR_COLORS = {
-            fireRate: '#f59e0b',
-            damage: '#ef4444',
-            accuracy: '#3b82f6',
-            range: '#8b5cf6',
-            stability: '#22c55e',
-            mobility: '#06b6d4'
-        };
-        const ATTR_NAMES = {
-            fireRate: '射速',
-            damage: '伤害',
-            accuracy: '精度',
-            range: '射程',
-            stability: '稳定性',
-            mobility: '机动'
-        };
-        const TYPE_NAMES = {
-            'AR':'突击步枪','SMG':'冲锋枪','SR':'狙击枪','SG':'霰弹枪',
-            'LMG':'机枪','Pistol':'手枪','Special':'特殊'
-        };
-        const SLOT_ICONS = {
-            '枪口':'🔇','枪管':'🔧','护木':'🛡️','前握把':'✋','上机匣':'📐',
-            '瞄具座':'🔭','后握把':'🤛','弹匣':'📦','枪托':'🦴','后托':'✋',
-            '贴腮板':'🧱','瞄具':'🔭'
-        };
+        const ATTR_COLORS = { fireRate: '#f59e0b', damage: '#ef4444', accuracy: '#3b82f6', range: '#8b5cf6', stability: '#22c55e', mobility: '#06b6d4' };
+        const ATTR_NAMES = { fireRate: '射速', damage: '伤害', accuracy: '精度', range: '射程', stability: '稳定性', mobility: '机动' };
+        const TYPE_NAMES = { 'AR':'突击步枪','SMG':'冲锋枪','SR':'狙击枪','SG':'霰弹枪','LMG':'机枪','Pistol':'手枪','Special':'特殊' };
+        const SLOT_ICONS = { '枪口':'🔇','枪管':'🔧','护木':'🛡️','前握把':'✋','上机匣':'📐','瞄具座':'🔭','后握把':'🤛','弹匣':'📦','枪托':'🦴','后托':'✋','贴腮板':'🧱','瞄具':'🔭' };
 
         async function loadWeapons() {
             weaponsData = await appUtils.loadJSON('data/weapons.json');
@@ -366,13 +205,6 @@
 
         function filterWeapons() { renderWeapons(); }
 
-        function getWeaponRating(w) {
-            // 综合评分公式
-            return Math.round(
-                (w.damage * 0.3 + w.fireRate * 0.25 + w.accuracy * 0.25 + w.range * 0.2) * 5.5
-            );
-        }
-
         function renderWeapons() {
             const container = document.getElementById('weaponList');
             const search = document.getElementById('searchInput').value.toLowerCase();
@@ -392,8 +224,9 @@
             if (search) {
                 weapons = weapons.filter(w =>
                     w.name.toLowerCase().includes(search) ||
-                    w.fullName.toLowerCase().includes(search) ||
-                    w.description.toLowerCase().includes(search)
+                    (w.fullName || '').toLowerCase().includes(search) ||
+                    (w.description || '').toLowerCase().includes(search) ||
+                    (w.tags || []).some(t => t.toLowerCase().includes(search))
                 );
             }
 
@@ -409,26 +242,45 @@
             const ATTRS = ['fireRate','damage','accuracy','range'];
             const ATTR_COLS = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6'];
 
-            container.innerHTML = weapons.map(w => `
+            container.innerHTML = weapons.map(w => {
+                const rating = w.rating || Math.round((w.damage * 0.3 + w.fireRate * 0.25 + w.accuracy * 0.25 + w.range * 0.2) * 5.5);
+                const tags = w.tags || [];
+                const code = w.code || '';
+                
+                return `
                 <div class="weapon-card" onclick="showWeaponDetail('${w.id}')">
-                    <div class="weapon-card-icon">${w.name.charAt(0)}</div>
-                    <div class="weapon-card-info">
-                        <span class="type-badge ${w.type}">${TYPE_NAMES[w.type] || w.type}</span>
-                        <h3>${w.name}</h3>
-                        <p>${w.description}</p>
+                    <div class="weapon-card-icon">
+                        ${w.image ? `<img src="${w.image}" alt="${w.name}" onerror="this.style.display='none';this.parentElement.innerHTML='${w.name.charAt(0)}'">` : w.name.charAt(0)}
                     </div>
-                    <div class="weapon-card-stats">
-                        ${ATTRS.map((attr, i) => `
-                            <div class="mini-stat">
-                                <span class="mini-stat-label">${ATTR_NAMES[attr]}</span>
-                                <div class="mini-stat-bar">
-                                    <div class="mini-stat-fill" style="width:${w[attr]}%;background:${ATTR_COLS[i]};"></div>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="weapon-card-info">
+                        <h3>
+                            ${w.name}
+                            ${tags.slice(0,1).map(t => `<span class="weapon-tag">${t}</span>`).join('')}
+                        </h3>
+                        <span class="type-badge ${w.type}">${TYPE_NAMES[w.type] || w.type}</span>
+                        <p>${w.description || ''}</p>
+                        ${tags.length > 1 ? `<div class="weapon-tags">${tags.slice(1,3).map(t => `<span class="weapon-tag">${t}</span>`).join('')}</div>` : ''}
+                    </div>
+                    <div class="weapon-card-right">
+                        <div class="weapon-rating-badge">${rating.toFixed(1)}</div>
+                        <div class="weapon-rating-label">综合评分</div>
+                        ${code ? `
+                        <div class="weapon-code-badge" onclick="event.stopPropagation();copyCode('${code}', this)">
+                            <span>📋 改枪码</span>
+                        </div>` : ''}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+
+        function copyCode(code, btn) {
+            navigator.clipboard.writeText(code).then(() => {
+                btn.classList.add('copied');
+                const span = btn.querySelector('span');
+                const old = span.textContent;
+                span.textContent = '✅ 已复制';
+                setTimeout(() => { span.textContent = old; btn.classList.remove('copied'); }, 1500);
+            });
         }
 
         function showWeaponDetail(weaponId) {
@@ -441,41 +293,58 @@
             if (!weapon) return;
             currentWeaponData = weapon;
 
-            const rating = getWeaponRating(weapon);
+            const rating = weapon.rating || Math.round((weapon.damage * 0.3 + weapon.fireRate * 0.25 + weapon.accuracy * 0.25 + weapon.range * 0.2) * 5.5);
             const ATTRS = ['fireRate','damage','accuracy','range'];
-
-            // 配件槽（基于枪械类型推荐）
+            const tags = weapon.tags || [];
             const slots = getSlotsForType(weapon.type);
 
             document.getElementById('modalWeaponTitle').textContent = `${weapon.name} · ${weapon.fullName}`;
             document.getElementById('modalWeaponBody').innerHTML = `
                 <!-- 英雄区 -->
                 <div class="modal-weapon-hero">
-                    <div class="modal-weapon-icon">${weapon.name.charAt(0)}</div>
-                    <div class="modal-weapon-name">${weapon.name}</div>
-                    <div class="modal-weapon-fullname">${weapon.fullName}</div>
-                    <div class="type-badge ${weapon.type}" style="display:inline-block;margin-top:8px;">${TYPE_NAMES[weapon.type] || weapon.type}</div>
-                    <p class="modal-weapon-desc">${weapon.description}</p>
-                    <div class="rating-area">
-                        <div class="score-big">${rating}</div>
-                        <div class="score-label">综合评分</div>
+                    <div class="modal-weapon-image">
+                        ${weapon.image ? `<img src="${weapon.image}" alt="${weapon.name}" onerror="this.style.display='none';this.parentElement.innerHTML='${weapon.name.charAt(0)}'">` : weapon.name.charAt(0)}
                     </div>
+                    <div class="modal-weapon-name">${weapon.name}</div>
+                    <div class="modal-weapon-fullname">${weapon.fullName || ''}</div>
+                    <span class="type-badge ${weapon.type}" style="display:inline-block;margin-top:8px;">${TYPE_NAMES[weapon.type] || weapon.type}</span>
+                    <p class="modal-weapon-desc">${weapon.description || ''}</p>
+                    
+                    <!-- 评分 -->
+                    <div class="rating-detail">
+                        <span class="rating-big">${rating.toFixed(1)}</span>
+                        <span class="rating-max">/ 10</span>
+                    </div>
+                    
+                    <!-- 标签 -->
+                    ${tags.length ? `
+                    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;">
+                        ${tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}
+                    </div>` : ''}
                 </div>
 
+                <!-- 改枪码 -->
+                ${weapon.code ? `
+                <div class="modal-section-title">🎮 改枪码</div>
+                <div class="code-display">
+                    <span class="code-text">${weapon.code}</span>
+                    <button class="code-copy-btn" onclick="copyCodeDetail('${weapon.code}', this)">复制</button>
+                </div>` : ''}
+
                 <!-- 属性面板 -->
-                <div class="modal-section-title">属性面板</div>
+                <div class="modal-section-title">📊 属性面板</div>
                 ${ATTRS.map(attr => `
                     <div class="attr-row">
                         <div class="attr-label">${ATTR_NAMES[attr]}</div>
                         <div class="attr-bar-track">
-                            <div class="attr-bar-fill" style="width:${weapon[attr]}%;background:${ATTR_COLORS[attr]};"></div>
+                            <div class="attr-bar-fill ATTR-${attr}" style="width:${weapon[attr]}%;"></div>
                         </div>
                         <div class="attr-value" style="color:${ATTR_COLORS[attr]};">${weapon[attr]}</div>
                     </div>
                 `).join('')}
 
                 <!-- 配件槽 -->
-                <div class="modal-section-title">配件槽位</div>
+                <div class="modal-section-title">🔧 配件推荐</div>
                 <div class="slot-grid">
                     ${slots.map(s => `
                         <div class="slot-item">
@@ -488,8 +357,8 @@
                     `).join('')}
                 </div>
 
-                <!-- 建议 -->
-                <div class="modal-section-title">使用建议</div>
+                <!-- 使用建议 -->
+                <div class="modal-section-title">💡 使用建议</div>
                 <p style="font-size:14px;color:var(--text-muted);line-height:1.8;">
                     ${getWeaponTips(weapon)}
                 </p>
@@ -498,20 +367,29 @@
             document.getElementById('weaponModal').classList.add('active');
         }
 
+        function copyCodeDetail(code, btn) {
+            navigator.clipboard.writeText(code).then(() => {
+                const old = btn.textContent;
+                btn.textContent = '已复制!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+            });
+        }
+
         function getSlotsForType(type) {
             const base = [
-                {slot:'枪口', name:'消音器 / 补偿器', icon:'🔇'},
-                {slot:'枪管', name:'长枪管 / 短枪管', icon:'🔧'},
-                {slot:'弹匣', name:'标准 / 加长弹匣', icon:'📦'},
-                {slot:'瞄具', name:'红点 / 全息 / 瞄准镜', icon:'🔭'},
+                {slot:'枪口',name:'消音器/补偿器',icon:'🔇'},
+                {slot:'枪管',name:'长枪管/短枪管',icon:'🔧'},
+                {slot:'弹匣',name:'标准/加长弹匣',icon:'📦'},
+                {slot:'瞄具',name:'红点/全息/瞄准镜',icon:'🔭'},
             ];
             const extra = {
-                'AR':  [{slot:'前握把',name:'垂直 / 角握把',icon:'✋'},{slot:'枪托',name:'伸缩 / 固定枪托',icon:'🦴'}],
-                'SMG': [{slot:'前握把',name:'激光瞄准器',icon:'🔦'},{slot:'枪托',name:'折叠 / 伸缩枪托',icon:'🦴'}],
-                'SR':  [{slot:'前握把',name:'双脚架',icon:'🦵'},{slot:'枪托',name:'固定 / 伸缩枪托',icon:'🦴'},{slot:'弹药',name:'马格南 / 狙击弹',icon:'💎'}],
-                'SG':  [{slot:'枪口',name:'扼流器 / 消音器',icon:'🔇'},{slot:'枪托',name:'伸缩枪托',icon:'🦴'}],
-                'LMG': [{slot:'前握把',name:'双脚架 / 垂直握把',icon:'🦵'},{slot:'枪托',name:'固定枪托',icon:'🦴'}],
-                'Pistol': [{slot:'枪口',name:'消音器 / 枪口 brake',icon:'🔇'},{slot:'瞄具',name:'红点 / 无',icon:'🔭'}],
+                'AR':  [{slot:'前握把',name:'垂直/角握把',icon:'✋'},{slot:'枪托',name:'伸缩/固定枪托',icon:'🦴'}],
+                'SMG': [{slot:'前握把',name:'激光瞄准器',icon:'🔦'},{slot:'枪托',name:'折叠/伸缩枪托',icon:'🦴'}],
+                'SR':  [{slot:'前握把',name:'双脚架',icon:'🦵'},{slot:'弹药',name:'马格南/狙击弹',icon:'💎'}],
+                'SG':  [{slot:'枪口',name:'扼流器/消音器',icon:'🔇'},{slot:'枪托',name:'伸缩枪托',icon:'🦴'}],
+                'LMG': [{slot:'前握把',name:'双脚架/垂直握把',icon:'🦵'},{slot:'枪托',name:'固定枪托',icon:'🦴'}],
+                'Pistol': [{slot:'枪口',name:'消音器/枪口制动',icon:'🔇'},{slot:'瞄具',name:'红点/无',icon:'🔭'}],
                 'Special': [{slot:'弹药',name:'特殊弹药',icon:'💎'},{slot:'配件',name:'根据武器类型',icon:'🔧'}],
             };
             return [...base, ...(extra[type] || [])];
@@ -534,7 +412,7 @@
 
         function createLoadoutFromWeapon() {
             closeWeaponModal();
-            window.location.href = `loadouts.html`;
+            window.location.href = 'loadouts.html';
         }
 
         loadWeapons();
