@@ -1,0 +1,416 @@
+{
+  "categories": [
+    {
+      "id": "assault-rifles",
+      "name": "突击步枪",
+      "icon": "🎯",
+      "weapons": [
+        {
+          "id": "hk416",
+          "name": "HK416",
+          "fullName": "Heckler & Koch HK416",
+          "type": "AR",
+          "description": "德国制造，可靠性高，射速快，后坐力可控",
+          "fireRate": 75,
+          "damage": 42,
+          "accuracy": 72,
+          "range": 55
+        },
+        {
+          "id": "m4a1",
+          "name": "M4A1",
+          "fullName": "Colt M4A1 Carbine",
+          "type": "AR",
+          "description": "美军制式步枪，通用性强，配件丰富",
+          "fireRate": 70,
+          "damage": 40,
+          "accuracy": 75,
+          "range": 52
+        },
+        {
+          "id": "ak12",
+          "name": "AK-12",
+          "fullName": "Kalashnikov AK-12",
+          "type": "AR",
+          "description": "俄制新锐步枪，单发伤害高，射速较慢",
+          "fireRate": 60,
+          "damage": 48,
+          "accuracy": 68,
+          "range": 58
+        },
+        {
+          "id": "aug",
+          "name": "AUG",
+          "fullName": "Steyr AUG",
+          "type": "AR",
+          "description": "奥地利无托步枪，精度高，视野好",
+          "fireRate": 68,
+          "damage": 43,
+          "accuracy": 78,
+          "range": 54
+        },
+        {
+          "id": "kac-srr",
+          "name": "KAC SRR",
+          "fullName": "Knight's Armament SRR",
+          "type": "AR",
+          "description": "精确射手步枪，半自动，远程精度极佳",
+          "fireRate": 45,
+          "damage": 52,
+          "accuracy": 85,
+          "range": 72
+        },
+        {
+          "id": "acr",
+          "name": "ACR",
+          "fullName": "Remington ACR",
+          "type": "AR",
+          "description": "多口径转换步枪，模块化设计",
+          "fireRate": 72,
+          "damage": 41,
+          "accuracy": 74,
+          "range": 56
+        }
+      ]
+    },
+    {
+      "id": "smg",
+      "name": "冲锋枪",
+      "icon": "⚡",
+      "weapons": [
+        {
+          "id": "mp5",
+          "name": "MP5",
+          "fullName": "Heckler & Koch MP5",
+          "type": "SMG",
+          "description": "经典冲锋枪，近距离之王，稳定性极高",
+          "fireRate": 85,
+          "damage": 32,
+          "accuracy": 70,
+          "range": 35
+        },
+        {
+          "id": "vector",
+          "name": "Vector",
+          "fullName": "KRISS Vector",
+          "type": "SMG",
+          "description": "极高射速，爆发力强，需要配件支持",
+          "fireRate": 95,
+          "damage": 28,
+          "accuracy": 62,
+          "range": 30
+        },
+        {
+          "id": "p90",
+          "name": "P90",
+          "fullName": "FN P90",
+          "type": "SMG",
+          "description": "50发弹匣，独特的下置弹匣设计",
+          "fireRate": 80,
+          "damage": 30,
+          "accuracy": 68,
+          "range": 38
+        },
+        {
+          "id": "pp19",
+          "name": "PP-19",
+          "fullName": "PP-19 Vityaz",
+          "type": "SMG",
+          "description": "俄制冲锋枪，弹鼓供弹，近战强力",
+          "fireRate": 78,
+          "damage": 33,
+          "accuracy": 65,
+          "range": 34
+        },
+        {
+          "id": "ump45",
+          "name": "UMP45",
+          "fullName": "Heckler & Koch UMP45",
+          "type": "SMG",
+          "description": "中近距离均衡，伤害较高",
+          "fireRate": 65,
+          "damage": 38,
+          "accuracy": 66,
+          "range": 40
+        }
+      ]
+    },
+    {
+      "id": "snipers",
+      "name": "狙击枪",
+      "icon": "🎯",
+      "weapons": [
+        {
+          "id": "m82",
+          "name": "M82A1",
+          "fullName": "Barrett M82A1",
+          "type": "SR",
+          "description": "重型反器材狙击枪，一击必杀",
+          "fireRate": 25,
+          "damage": 98,
+          "accuracy": 92,
+          "range": 95
+        },
+        {
+          "id": "awm",
+          "name": "AWM",
+          "fullName": "Accuracy International AWM",
+          "type": "SR",
+          "description": "英制狙击步枪，马格南弹药，极高伤害",
+          "fireRate": 28,
+          "damage": 95,
+          "accuracy": 94,
+          "range": 92
+        },
+        {
+          "id": "m24",
+          "name": "M24",
+          "fullName": "M24 SWS",
+          "type": "SR",
+          "description": "美军制式狙击系统，可靠精准",
+          "fireRate": 30,
+          "damage": 88,
+          "accuracy": 90,
+          "range": 88
+        },
+        {
+          "id": "msg90",
+          "name": "MSG90",
+          "fullName": "Heckler & Koch MSG90",
+          "type": "SR",
+          "description": "德制精确狙击步枪，半自动",
+          "fireRate": 40,
+          "damage": 78,
+          "accuracy": 88,
+          "range": 82
+        },
+        {
+          "id": "aw50",
+          "name": "AW50",
+          "fullName": "Accuracy International AW50",
+          "type": "SR",
+          "description": "英制反器材狙击枪，远距离精确打击",
+          "fireRate": 22,
+          "damage": 96,
+          "accuracy": 93,
+          "range": 94
+        },
+        {
+          "id": "msr",
+          "name": "MSR",
+          "fullName": "Magnum Research MSR",
+          "type": "SR",
+          "description": "模块化狙击系统，高精度",
+          "fireRate": 32,
+          "damage": 90,
+          "accuracy": 91,
+          "range": 90
+        }
+      ]
+    },
+    {
+      "id": "shotguns",
+      "name": "霰弹枪",
+      "icon": "💥",
+      "weapons": [
+        {
+          "id": "m870",
+          "name": "M870",
+          "fullName": "Remington Model 870",
+          "type": "SG",
+          "description": "经典唧筒式霰弹枪，可靠耐用",
+          "fireRate": 35,
+          "damage": 85,
+          "accuracy": 45,
+          "range": 15
+        },
+        {
+          "id": "spas12",
+          "name": "SPAS-12",
+          "fullName": "Franchi SPAS-12",
+          "type": "SG",
+          "description": "意制霰弹枪，可切换半自动/唧筒",
+          "fireRate": 40,
+          "damage": 82,
+          "accuracy": 48,
+          "range": 16
+        },
+        {
+          "id": "saiga12",
+          "name": "Saiga-12",
+          "fullName": "Kalashnikov Saiga-12",
+          "type": "SG",
+          "description": "俄制半自动霰弹枪，弹匣供弹",
+          "fireRate": 50,
+          "damage": 78,
+          "accuracy": 50,
+          "range": 14
+        },
+        {
+          "id": "m1014",
+          "name": "M1014",
+          "fullName": "Benelli M1014",
+          "type": "SG",
+          "description": "意制半自动霰弹枪，竞技级精度",
+          "fireRate": 45,
+          "damage": 80,
+          "accuracy": 55,
+          "range": 17
+        }
+      ]
+    },
+    {
+      "id": "lmgs",
+      "name": "机枪",
+      "icon": "🔥",
+      "weapons": [
+        {
+          "id": "m249",
+          "name": "M249",
+          "fullName": "FN M249 SAW",
+          "type": "LMG",
+          "description": "班用自动武器，持续火力压制",
+          "fireRate": 85,
+          "damage": 38,
+          "accuracy": 55,
+          "range": 60
+        },
+        {
+          "id": "mk48",
+          "name": "MK48",
+          "fullName": "FN MK48 Mod 1",
+          "type": "LMG",
+          "description": "中型机枪，平衡性能优秀",
+          "fireRate": 78,
+          "damage": 42,
+          "accuracy": 58,
+          "range": 62
+        },
+        {
+          "id": "rpd",
+          "name": "RPD",
+          "fullName": "RPD",
+          "type": "LMG",
+          "description": "俄制轻机枪，弹链供弹",
+          "fireRate": 75,
+          "damage": 40,
+          "accuracy": 52,
+          "range": 58
+        },
+        {
+          "id": "dp28",
+          "name": "DP-28",
+          "fullName": "DP-28",
+          "type": "LMG",
+          "description": "俄制盘式机枪，47发弹盘",
+          "fireRate": 60,
+          "damage": 45,
+          "accuracy": 50,
+          "range": 55
+        }
+      ]
+    },
+    {
+      "id": "pistols",
+      "name": "手枪",
+      "icon": "🔫",
+      "weapons": [
+        {
+          "id": "m1911",
+          "name": "M1911",
+          "fullName": "Colt M1911",
+          "type": "Pistol",
+          "description": "经典.45口径手枪，单发伤害高",
+          "fireRate": 35,
+          "damage": 45,
+          "accuracy": 70,
+          "range": 20
+        },
+        {
+          "id": "deagle",
+          "name": "沙漠之鹰",
+          "fullName": "IMI Desert Eagle",
+          "type": "Pistol",
+          "description": "大口径手枪，威力惊人",
+          "fireRate": 25,
+          "damage": 65,
+          "accuracy": 60,
+          "range": 25
+        },
+        {
+          "id": "glock17",
+          "name": "Glock 17",
+          "fullName": "Glock 17",
+          "type": "Pistol",
+          "description": "奥地利制式手枪，高可靠性",
+          "fireRate": 50,
+          "damage": 35,
+          "accuracy": 72,
+          "range": 18
+        },
+        {
+          "id": "usp45",
+          "name": "USP45",
+          "fullName": "Heckler & Koch USP45",
+          "type": "Pistol",
+          "description": "德制战术手枪，多种口径",
+          "fireRate": 45,
+          "damage": 40,
+          "accuracy": 75,
+          "range": 20
+        },
+        {
+          "id": "p226",
+          "name": "P226",
+          "fullName": "SIG Sauer P226",
+          "type": "Pistol",
+          "description": "瑞士制手枪，精度优秀",
+          "fireRate": 48,
+          "damage": 38,
+          "accuracy": 78,
+          "range": 19
+        }
+      ]
+    },
+    {
+      "id": "special",
+      "name": "特殊武器",
+      "icon": "⚔️",
+      "weapons": [
+        {
+          "id": "crossbow",
+          "name": "十字弩",
+          "fullName": "战术十字弩",
+          "type": "Special",
+          "description": "无声击杀，近距离秒杀",
+          "fireRate": 15,
+          "damage": 90,
+          "accuracy": 85,
+          "range": 50
+        },
+        {
+          "id": "minigun",
+          "name": "加特林",
+          "fullName": "M134 Minigun",
+          "type": "Special",
+          "description": "超高射速，需要载具电源",
+          "fireRate": 100,
+          "damage": 25,
+          "accuracy": 40,
+          "range": 45
+        },
+        {
+          "id": "rpg",
+          "name": "RPG",
+          "fullName": "RPG-7",
+          "type": "Special",
+          "description": "火箭推进榴弹，范围伤害",
+          "fireRate": 10,
+          "damage": 100,
+          "accuracy": 50,
+          "range": 80
+        }
+      ]
+    }
+  ]
+}
