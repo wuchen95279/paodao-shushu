@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跑刀鼠鼠 - 三角洲行动工具站</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">🐭</span>
+                <span class="logo-text">跑刀鼠鼠</span>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link active">首页</a>
+                <a href="maps.html" class="nav-link">地图点位</a>
+                <a href="loadouts.html" class="nav-link">改枪码</a>
+                <a href="weapons.html" class="nav-link">枪械图鉴</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">三角洲行动攻略工具</h1>
+                <p class="hero-subtitle">地图点位查询 · 改枪码管理 · 枪械数据百科</p>
+                <div class="hero-buttons">
+                    <a href="maps.html" class="btn btn-primary">
+                        <span class="btn-icon">🗺️</span>
+                        查看地图点位
+                    </a>
+                    <a href="loadouts.html" class="btn btn-secondary">
+                        <span class="btn-icon">🔧</span>
+                        管理改枪码
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能卡片 -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>地图点位</h3>
+                    <p>三角洲官方地图工具 + 玩家攻略点位。零号大坝、长弓溪谷、航天基地等官方坐标，一键跳转</p>
+                    <a href="maps.html" class="feature-link">查看地图 →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>改枪码管理</h3>
+                    <p>收录全部枪械，支持自定义添加改枪配置，可导出分享，打造专属武器方案</p>
+                    <a href="loadouts.html" class="feature-link">管理改枪码 →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>枪械图鉴</h3>
+                    <p>突击步枪、冲锋枪、狙击枪等全武器数据，包含射速、伤害、精度等详细参数</p>
+                    <a href="weapons.html" class="feature-link">查看枪械 →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速统计 -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="weaponCount">0</span>
+                    <span class="stat-label">把枪械</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="mapCount">0</span>
+                    <span class="stat-label">张地图</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="loadoutCount">0</span>
+                    <span class="stat-label">个改枪码</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="markerCount">0</span>
+                    <span class="stat-label">个点位</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 使用说明 -->
+    <section class="guide">
+        <div class="container">
+            <h2 class="section-title">使用指南</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>浏览地图</h4>
+                        <p>在地图页面查看各点位分布，点击标记查看详情和战术建议</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>选择枪械</h4>
+                        <p>在枪械图鉴中查看全部武器数据，找到适合你的武器</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>配置改枪</h4>
+                        <p>在改枪码页面添加你的专属配置，选择配件并添加备注说明</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>保存使用</h4>
+                        <p>配置会自动保存，复制改枪码到游戏中使用</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>跑刀鼠鼠 · 三角洲行动攻略工具 · 仅供学习交流</p>
+            <p class="footer-tip">数据来源网络整理，如有错误欢迎指正</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const [weapons, maps, loadouts] = await Promise.all([
+                    fetch('data/weapons.json').then(r => r.json()),
+                    fetch('data/maps.json').then(r => r.json()),
+                    fetch('data/loadouts.json').then(r => r.json())
+                ]);
+
+                // 计算枪械总数
+                let weaponCount = 0;
+                weapons.categories.forEach(cat => weaponCount += cat.weapons.length);
+                document.getElementById('weaponCount').textContent = weaponCount;
+
+                // 地图数量
+                document.getElementById('mapCount').textContent = maps.maps.length;
+
+                // 改枪码数量
+                document.getElementById('loadoutCount').textContent = loadouts.loadouts.length;
+
+                // 点位数量
+                let markerCount = 0;
+                maps.maps.forEach(map => {
+                    map.zones.forEach(zone => {
+                        markerCount += zone.markers.length;
+                    });
+                });
+                document.getElementById('markerCount').textContent = markerCount;
+            } catch (e) {
+                console.error('加载统计数据失败:', e);
+            }
+        }
+        loadStats();
+    </script>
+</body>
+</html>
