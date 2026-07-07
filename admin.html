@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 跑刀鼠鼠</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+        
+        /* 顶部导航 */
+        .header { background: #1a1a2e; border-bottom: 1px solid #333; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; color: #f0c040; }
+        .header a { color: #888; text-decoration: none; margin-left: 20px; }
+        .header a:hover { color: #fff; }
+        
+        /* 登录面板 */
+        .login-panel { max-width: 500px; margin: 80px auto; padding: 40px; background: #1a1a2e; border-radius: 16px; text-align: center; }
+        .login-panel h2 { margin-bottom: 24px; color: #f0c040; }
+        .login-panel p { color: #888; margin-bottom: 24px; line-height: 1.6; font-size: 14px; }
+        .login-panel code { background: #0f0f1a; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        .token-input { width: 100%; padding: 14px 16px; background: #0f0f1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; margin-bottom: 16px; }
+        .token-input:focus { border-color: #f0c040; outline: none; }
+        .btn { padding: 12px 32px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #f0c040; color: #1a1a2e; font-weight: 600; }
+        .btn-primary:hover { background: #ffdd60; }
+        .btn-secondary { background: #333; color: #fff; }
+        .btn-danger { background: #dc3545; color: #fff; }
+        .btn-small { padding: 6px 16px; font-size: 13px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* 管理面板 */
+        .admin-panel { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+        .admin-panel.active { display: block; }
+        
+        /* 工具栏 */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+        .toolbar-left { display: flex; gap: 12px; align-items: center; }
+        .toolbar-right { display: flex; gap: 12px; align-items: center; }
+        
+        /* 分类标签 */
+        .category-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .category-tab { padding: 8px 16px; background: #1a1a2e; border: 1px solid #333; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .category-tab:hover { border-color: #f0c040; }
+        .category-tab.active { background: #f0c040; color: #1a1a2e; border-color: #f0c040; font-weight: 600; }
+        
+        /* 武器卡片网格 */
+        .weapons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+        .weapon-card { background: #1a1a2e; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a3e; transition: all 0.2s; }
+        .weapon-card:hover { border-color: #f0c040; }
+        .weapon-image { width: 100%; height: 180px; object-fit: cover; background: #0f0f1a; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .weapon-info { padding: 16px; }
+        .weapon-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .weapon-name { font-size: 18px; font-weight: 600; color: #fff; }
+        .weapon-type { font-size: 12px; padding: 4px 8px; background: #333; border-radius: 4px; color: #888; }
+        .weapon-desc { font-size: 13px; color: #888; margin-bottom: 12px; line-height: 1.5; }
+        .weapon-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stat-item { display: flex; justify-content: space-between; font-size: 12px; }
+        .stat-label { color: #666; }
+        .stat-bar { width: 60px; height: 4px; background: #333; border-radius: 2px; }
+        .stat-fill { height: 100%; background: linear-gradient(90deg, #f0c040, #ff8c00); border-radius: 2px; }
+        .weapon-actions { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #2a2a3e; }
+        
+        /* 模态框 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #1a1a2e; border-radius: 16px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { color: #f0c040; }
+        .modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+        .modal-close:hover { color: #fff; }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid #333; display: flex; justify-content: flex-end; gap: 12px; }
+        
+        /* 表单 */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-size: 14px; color: #888; }
+        .form-input { width: 100%; padding: 12px 14px; background: #0f0f1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; }
+        .form-input:focus { border-color: #f0c040; outline: none; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-textarea { width: 100%; padding: 12px 14px; background: #0f0f1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; resize: vertical; min-height: 80px; }
+        .form-textarea:focus { border-color: #f0c040; outline: none; }
+        
+        /* 图片上传 */
+        .image-upload { border: 2px dashed #333; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .image-upload:hover { border-color: #f0c040; }
+        .image-upload.has-image { padding: 0; border-style: solid; }
+        .image-upload img { width: 100%; height: 200px; object-fit: contain; background: #0f0f1a; }
+        .image-upload-text { color: #666; font-size: 14px; }
+        .image-upload-text span { color: #f0c040; }
+        
+        /* 状态提示 */
+        .toast { position: fixed; bottom: 24px; right: 24px; padding: 16px 24px; background: #1a1a2e; border-radius: 8px; border: 1px solid #333; z-index: 2000; display: none; }
+        .toast.success { border-color: #28a745; }
+        .toast.error { border-color: #dc3545; }
+        .toast.show { display: block; }
+        
+        /* 加载状态 */
+        .loading { display: flex; align-items: center; justify-content: center; padding: 60px; color: #888; }
+        .spinner { width: 24px; height: 24px; border: 2px solid #333; border-top-color: #f0c040; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* 分类选择器 */
+        .category-select { width: 100%; padding: 12px 14px; background: #0f0f1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; }
+        .category-select:focus { border-color: #f0c040; outline: none; }
+        
+        /* 滑条 */
+        .range-group { display: flex; align-items: center; gap: 12px; }
+        .range-input { flex: 1; -webkit-appearance: none; height: 6px; background: #333; border-radius: 3px; cursor: pointer; }
+        .range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #f0c040; border-radius: 50%; cursor: pointer; }
+        .range-value { min-width: 36px; text-align: center; font-size: 14px; color: #f0c040; }
+        
+        /* 标签输入 */
+        .tags-input-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: #0f0f1a; border: 1px solid #333; border-radius: 8px; min-height: 46px; }
+        .tag-chip { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: #333; border-radius: 4px; font-size: 12px; }
+        .tag-chip button { background: none; border: none; color: #888; cursor: pointer; font-size: 14px; }
+        .tags-input { flex: 1; min-width: 100px; background: none; border: none; color: #fff; font-size: 14px; outline: none; }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .weapons-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <h1>🔫 跑刀鼠鼠 - 管理后台</h1>
+        <div>
+            <a href="index.html">返回主站</a>
+            <a href="#" id="logoutBtn" style="display:none;">退出登录</a>
+        </div>
+    </div>
+    
+    <!-- 登录面板 -->
+    <div class="login-panel" id="loginPanel">
+        <h2>🔐 GitHub 授权登录</h2>
+        <p>
+            请提供你的 GitHub Personal Access Token 来管理武器数据。<br><br>
+            生成 Token：<code>GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)</code><br><br>
+            需要的权限：<code>repo</code>（完全访问）<br><br>
+            Token 仅保存在本地浏览器中。
+        </p>
+        <input type="password" class="token-input" id="tokenInput" placeholder="粘贴你的 GitHub Token (ghp_...)">
+        <button class="btn btn-primary" id="loginBtn">登录</button>
+        <div style="margin-top: 16px;">
+            <button class="btn btn-secondary btn-small" id="demoBtn">演示模式（不保存）</button>
+        </div>
+    </div>
+    
+    <!-- 管理面板 -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-primary" id="addWeaponBtn">+ 添加武器</button>
+                <span id="weaponCount" style="color: #888; font-size: 14px;"></span>
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-secondary btn-small" id="exportBtn">导出 JSON</button>
+                <button class="btn btn-secondary btn-small" id="importBtn">导入 JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+        </div>
+        
+        <!-- 分类标签 -->
+        <div class="category-tabs" id="categoryTabs">
+            <div class="category-tab active" data-category="all">全部</div>
+        </div>
+        
+        <!-- 武器列表 -->
+        <div class="weapons-grid" id="weaponsGrid">
+            <div class="loading"><div class="spinner"></div>加载中...</div>
+        </div>
+    </div>
+    
+    <!-- 添加/编辑模态框 -->
+    <div class="modal-overlay" id="weaponModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加武器</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="weaponId">
+                
+                <!-- 图片上传 -->
+                <div class="form-group">
+                    <label class="form-label">武器图片</label>
+                    <div class="image-upload" id="imageUpload">
+                        <div class="image-upload-text" id="imageUploadText">
+                            点击上传图片<br><span>支持 JPG/PNG/GIF，建议 400×300</span>
+                        </div>
+                        <img id="imagePreview" style="display: none;">
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    <input type="hidden" id="weaponImage">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">武器名称 *</label>
+                        <input type="text" class="form-input" id="weaponName" placeholder="例如：HK416">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">武器分类 *</label>
+                        <select class="category-select" id="weaponCategory">
+                            <option value="assault-rifles">突击步枪</option>
+                            <option value="smg">冲锋枪</option>
+                            <option value="snipers">狙击枪</option>
+                            <option value="shotguns">霰弹枪</option>
+                            <option value="lmgs">机枪</option>
+                            <option value="pistols">手枪</option>
+                            <option value="special">特殊武器</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">全称</label>
+                    <input type="text" class="form-input" id="weaponFullName" placeholder="例如：Heckler & Koch HK416">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">武器类型标签</label>
+                    <input type="text" class="form-input" id="weaponType" placeholder="例如：AR / SMG / SR">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">描述</label>
+                    <textarea class="form-textarea" id="weaponDesc" placeholder="简要描述武器特点..."></textarea>
+                </div>
+                
+                <!-- 属性 -->
+                <div class="form-group">
+                    <label class="form-label">属性评分（0-100）</label>
+                    <div style="display: grid; gap: 12px;">
+                        <div class="range-group">
+                            <span style="min-width: 70px; font-size: 13px;">射速</span>
+                            <input type="range" class="range-input" id="statFireRate" min="0" max="100" value="50">
+                            <span class="range-value" id="statFireRateValue">50</span>
+                        </div>
+                        <div class="range-group">
+                            <span style="min-width: 70px; font-size: 13px;">伤害</span>
+                            <input type="range" class="range-input" id="statDamage" min="0" max="100" value="50">
+                            <span class="range-value" id="statDamageValue">50</span>
+                        </div>
+                        <div class="range-group">
+                            <span style="min-width: 70px; font-size: 13px;">精度</span>
+                            <input type="range" class="range-input" id="statAccuracy" min="0" max="100" value="50">
+                            <span class="range-value" id="statAccuracyValue">50</span>
+                        </div>
+                        <div class="range-group">
+                            <span style="min-width: 70px; font-size: 13px;">射程</span>
+                            <input type="range" class="range-input" id="statRange" min="0" max="100" value="50">
+                            <span class="range-value" id="statRangeValue">50</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">评分（0-10）</label>
+                        <input type="number" class="form-input" id="weaponRating" min="0" max="10" step="0.1" value="7.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">改枪码</label>
+                        <input type="text" class="form-input" id="weaponCode" placeholder="例如：ABC123">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">标签（回车添加）</label>
+                    <div class="tags-input-container" id="tagsContainer">
+                        <input type="text" class="tags-input" id="tagsInput" placeholder="输入标签后按回车...">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">取消</button>
+                <button class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提示 -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // ===== 配置 =====
+        const CONFIG = {
+            owner: 'wuchen95279',
+            repo: 'paodao-shushu',
+            branch: 'main',
+            weaponsFile: 'data/weapons.json',
+            imagesFolder: 'assets/images/'
+        };
+        
+        // ===== 状态 =====
+        let state = {
+            token: localStorage.getItem('gh_token') || '',
+            isDemo: localStorage.getItem('gh_demo') === 'true',
+            weapons: null,
+            currentCategory: 'all',
+            currentTags: [],
+            editImage: null
+        };
+        
+        // ===== DOM =====
+        const $ = id => document.getElementById(id);
+        const loginPanel = $('loginPanel');
+        const adminPanel = $('adminPanel');
+        const tokenInput = $('tokenInput');
+        const loginBtn = $('loginBtn');
+        const demoBtn = $('demoBtn');
+        const logoutBtn = $('logoutBtn');
+        const weaponsGrid = $('weaponsGrid');
+        const categoryTabs = $('categoryTabs');
+        const weaponModal = $('weaponModal');
+        const toast = $('toast');
+        
+        // ===== GitHub API =====
+        const api = {
+            headers: () => ({
+                'Authorization': `token ${state.token}`,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            }),
+            
+            async request(method, url, data = null) {
+                const options = { method, headers: this.headers() };
+                if (data) options.body = JSON.stringify(data);
+                const r = await fetch(url, options);
+                const text = await r.text();
+                let json;
+                try { json = JSON.parse(text); } catch { json = { message: text }; }
+                if (!r.ok) throw new Error(json.message || `HTTP ${r.status}`);
+                return json;
+            },
+            
+            getFile: (path) => api.request('GET', `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}?ref=${CONFIG.branch}`),
+            putFile: (path, content, message, sha = null) => {
+                const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
+                if (sha) body.sha = sha;
+                return api.request('PUT', `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`, body);
+            },
+            deleteFile: (path, sha, message) => api.request('DELETE', `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`, { message, sha }),
+            uploadImage: (filename, dataurl) => {
+                const base64 = dataurl.split(',')[1];
+                return api.request('PUT', `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.imagesFolder}${filename}`, {
+                    message: `Upload image: ${filename}`,
+                    content: base64
+                });
+            }
+        };
+        
+        // ===== 工具函数 =====
+        function showToast(msg, type = 'success') {
+            toast.textContent = msg;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function getEmoji(type) {
+            const map = { 'AR': '🎯', 'SMG': '⚡', 'SR': '🎯', 'SG': '💥', 'LMG': '🔥', 'Pistol': '🔫', 'Special': '⚔️', 'default': '🔫' };
+            return map[type] || map['default'];
+        }
+        
+        function generateId(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'weapon-' + Date.now();
+        }
+        
+        // ===== 认证 =====
+        async function checkAuth() {
+            if (state.token) {
+                try {
+                    await fetch('https://api.github.com/user', { headers: api.headers() });
+                    showAdmin();
+                    return true;
+                } catch (e) {
+                    localStorage.removeItem('gh_token');
+                    state.token = '';
+                }
+            }
+            if (state.isDemo) {
+                showAdmin();
+                return true;
+            }
+            return false;
+        }
+        
+        async function doLogin() {
+            const token = tokenInput.value.trim();
+            if (!token) { showToast('请输入 Token', 'error'); return; }
+            state.token = token;
+            try {
+                const user = await fetch('https://api.github.com/user', { 
+                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' }
+                }).then(r => r.json());
+                if (user.login) {
+                    localStorage.setItem('gh_token', token);
+                    showToast(`欢迎，${user.login}！`);
+                    showAdmin();
+                }
+            } catch (e) {
+                showToast('Token 无效，请检查后重试', 'error');
+            }
+        }
+        
+        function doDemo() {
+            state.isDemo = true;
+            localStorage.setItem('gh_demo', 'true');
+            showToast('演示模式：修改不会保存');
+            showAdmin();
+        }
+        
+        function doLogout() {
+            state.token = '';
+            state.isDemo = false;
+            localStorage.removeItem('gh_token');
+            localStorage.removeItem('gh_demo');
+            loginPanel.style.display = 'block';
+            adminPanel.classList.remove('active');
+            logoutBtn.style.display = 'none';
+            tokenInput.value = '';
+        }
+        
+        function showAdmin() {
+            loginPanel.style.display = 'none';
+            adminPanel.classList.add('active');
+            logoutBtn.style.display = 'inline';
+            logoutBtn.style.color = '#888';
+            logoutBtn.style.textDecoration = 'none';
+            loadWeapons();
+        }
+        
+        // ===== 数据加载 =====
+        async function loadWeapons() {
+            weaponsGrid.innerHTML = '<div class="loading"><div class="spinner"></div>加载中...</div>';
+            try {
+                const file = await api.getFile(CONFIG.weaponsFile);
+                const content = decodeURIComponent(escape(atob(file.content)));
+                state.weapons = JSON.parse(content);
+                renderCategories();
+                renderWeapons();
+            } catch (e) {
+                weaponsGrid.innerHTML = `<div class="loading" style="color:#dc3545;">加载失败: ${e.message}</div>`;
+                showToast('加载武器数据失败', 'error');
+            }
+        }
+        
+        function renderCategories() {
+            const cats = [{ id: 'all', name: '全部' }];
+            state.weapons.categories.forEach(c => cats.push(c));
+            categoryTabs.innerHTML = cats.map(c => 
+                `<div class="category-tab${c.id === state.currentCategory ? ' active' : ''}" data-category="${c.id}">${c.name}</div>`
+            ).join('');
+        }
+        
+        function renderWeapons() {
+            const allWeapons = [];
+            state.weapons.categories.forEach(cat => {
+                cat.weapons.forEach(w => allWeapons.push({ ...w, categoryId: cat.id, categoryName: cat.name }));
+            });
+            
+            const filtered = state.currentCategory === 'all' 
+                ? allWeapons 
+                : allWeapons.filter(w => w.categoryId === state.currentCategory);
+            
+            $('weaponCount').textContent = `共 ${allWeapons.length} 把武器`;
+            
+            if (filtered.length === 0) {
+                weaponsGrid.innerHTML = '<div class="loading">该分类暂无武器</div>';
+                return;
+            }
+            
+            weaponsGrid.innerHTML = filtered.map(w => `
+                <div class="weapon-card" data-id="${w.id}" data-category="${w.categoryId}">
+                    <div class="weapon-image">
+                        ${w.image ? `<img src="${w.image}" alt="${w.name}" style="width:100%;height:100%;object-fit:contain;">` : getEmoji(w.type)}
+                    </div>
+                    <div class="weapon-info">
+                        <div class="weapon-header">
+                            <span class="weapon-name">${w.name}</span>
+                            <span class="weapon-type">${w.type || w.categoryName}</span>
+                        </div>
+                        <p class="weapon-desc">${w.description || ''}</p>
+                        <div class="weapon-stats">
+                            <div class="stat-item"><span class="stat-label">射速</span><div class="stat-bar"><div class="stat-fill" style="width:${w.fireRate}%"></div></div></div>
+                            <div class="stat-item"><span class="stat-label">伤害</span><div class="stat-bar"><div class="stat-fill" style="width:${w.damage}%"></div></div></div>
+                            <div class="stat-item"><span class="stat-label">精度</span><div class="stat-bar"><div class="stat-fill" style="width:${w.accuracy}%"></div></div></div>
+                            <div class="stat-item"><span class="stat-label">射程</span><div class="stat-bar"><div class="stat-fill" style="width:${w.range}%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="weapon-actions">
+                        <button class="btn btn-secondary btn-small" onclick="editWeapon('${w.categoryId}', '${w.id}')">编辑</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteWeapon('${w.categoryId}', '${w.id}')">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ===== 模态框操作 =====
+        function openModal(isEdit = false) {
+            $('modalTitle').textContent = isEdit ? '编辑武器' : '添加武器';
+            weaponModal.classList.add('active');
+            if (!isEdit) {
+                $('weaponId').value = '';
+                $('weaponName').value = '';
+                $('weaponFullName').value = '';
+                $('weaponCategory').value = 'assault-rifles';
+                $('weaponType').value = '';
+                $('weaponDesc').value = '';
+                $('weaponRating').value = '7.0';
+                $('weaponCode').value = '';
+                $('weaponImage').value = '';
+                $('imagePreview').style.display = 'none';
+                $('imageUploadText').style.display = 'block';
+                $('imageUpload').classList.remove('has-image');
+                state.currentTags = [];
+                state.editImage = null;
+                ['FireRate', 'Damage', 'Accuracy', 'Range'].forEach(s => {
+                    $(`stat${s}`).value = 50;
+                    $(`stat${s}Value`).textContent = '50';
+                });
+                renderTags();
+            }
+        }
+        
+        function closeModal() {
+            weaponModal.classList.remove('active');
+            state.currentTags = [];
+            state.editImage = null;
+        }
+        
+        function renderTags() {
+            const container = $('tagsContainer');
+            const input = $('tagsInput');
+            container.innerHTML = state.currentTags.map(t => 
+                `<div class="tag-chip">${t} <button onclick="removeTag('${t}')">&times;</button></div>`
+            ).join('') + '<input type="text" class="tags-input" id="tagsInput" placeholder="输入标签后按回车...">';
+            const newInput = $('tagsInput');
+            newInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = newInput.value.trim();
+                    if (val && !state.currentTags.includes(val)) {
+                        state.currentTags.push(val);
+                        renderTags();
+                    }
+                }
+            });
+        }
+        
+        function removeTag(tag) {
+            state.currentTags = state.currentTags.filter(t => t !== tag);
+            renderTags();
+        }
+        
+        // ===== 增删改 =====
+        function editWeapon(catId, weaponId) {
+            const cat = state.weapons.categories.find(c => c.id === catId);
+            if (!cat) return;
+            const weapon = cat.weapons.find(w => w.id === weaponId);
+            if (!weapon) return;
+            
+            $('weaponId').value = weaponId;
+            $('weaponCategory').value = catId;
+            $('weaponName').value = weapon.name;
+            $('weaponFullName').value = weapon.fullName || '';
+            $('weaponType').value = weapon.type || '';
+            $('weaponDesc').value = weapon.description || '';
+            $('weaponRating').value = weapon.rating || '7.0';
+            $('weaponCode').value = weapon.code || '';
+            $('weaponImage').value = weapon.image || '';
+            
+            if (weapon.image) {
+                $('imagePreview').src = weapon.image;
+                $('imagePreview').style.display = 'block';
+                $('imageUploadText').style.display = 'none';
+                $('imageUpload').classList.add('has-image');
+            }
+            
+            ['FireRate', 'Damage', 'Accuracy', 'Range'].forEach(s => {
+                const key = s.charAt(0).toLowerCase() + s.slice(1);
+                const val = weapon[key] || 50;
+                $(`stat${s}`).value = val;
+                $(`stat${s}Value`).textContent = val;
+            });
+            
+            state.currentTags = weapon.tags || [];
+            renderTags();
+            openModal(true);
+        }
+        
+        async function saveWeapon() {
+            const id = $('weaponId').value;
+            const name = $('weaponName').value.trim();
+            if (!name) { showToast('请输入武器名称', 'error'); return; }
+            
+            const catId = $('weaponCategory').value;
+            let image = $('weaponImage').value;
+            
+            // 上传图片
+            if (state.editImage && !state.editImage.startsWith('http')) {
+                try {
+                    if (state.isDemo) {
+                        showToast('演示模式：图片未上传', 'error');
+                    } else {
+                        const filename = `${generateId(name)}-${Date.now()}.${state.editImage.split(';')[0].split('/')[1]}`;
+                        await api.uploadImage(filename, state.editImage);
+                        image = `${CONFIG.imagesFolder}${filename}`;
+                        showToast('图片上传成功');
+                    }
+                } catch (e) {
+                    showToast(`图片上传失败: ${e.message}`, 'error');
+                    return;
+                }
+            }
+            
+            const weapon = {
+                id: id || generateId(name),
+                name,
+                fullName: $('weaponFullName').value.trim(),
+                type: $('weaponType').value.trim(),
+                description: $('weaponDesc').value.trim(),
+                fireRate: parseInt($('statFireRate').value),
+                damage: parseInt($('statDamage').value),
+                accuracy: parseInt($('statAccuracy').value),
+                range: parseInt($('statRange').value),
+                rating: parseFloat($('weaponRating').value) || 7.0,
+                code: $('weaponCode').value.trim(),
+                tags: [...state.currentTags],
+                image: image
+            };
+            
+            let cat = state.weapons.categories.find(c => c.id === catId);
+            if (!cat) {
+                cat = { id: catId, name: catId, icon: '🔫', weapons: [] };
+                state.weapons.categories.push(cat);
+            }
+            
+            if (id) {
+                const idx = cat.weapons.findIndex(w => w.id === id);
+                if (idx >= 0) cat.weapons[idx] = weapon;
+            } else {
+                cat.weapons.push(weapon);
+            }
+            
+            await saveData();
+            closeModal();
+            showToast(id ? '武器已更新' : '武器已添加');
+            renderCategories();
+            renderWeapons();
+        }
+        
+        async function deleteWeapon(catId, weaponId) {
+            if (!confirm('确定要删除这把武器吗？')) return;
+            
+            const cat = state.weapons.categories.find(c => c.id === catId);
+            if (!cat) return;
+            cat.weapons = cat.weapons.filter(w => w.id !== weaponId);
+            
+            await saveData();
+            showToast('武器已删除');
+            renderWeapons();
+        }
+        
+        async function saveData() {
+            if (state.isDemo) return;
+            try {
+                const file = await api.getFile(CONFIG.weaponsFile);
+                await api.putFile(CONFIG.weaponsFile, JSON.stringify(state.weapons, null, 2), 'Update weapons data', file.sha);
+            } catch (e) {
+                showToast(`保存失败: ${e.message}`, 'error');
+                throw e;
+            }
+        }
+        
+        // ===== 导入导出 =====
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(state.weapons, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'weapons.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (data.categories) {
+                        state.weapons = data;
+                        await saveData();
+                        renderCategories();
+                        renderWeapons();
+                        showToast('导入成功');
+                    } else {
+                        showToast('无效的数据格式', 'error');
+                    }
+                } catch (err) {
+                    showToast('解析 JSON 失败', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // ===== 事件绑定 =====
+        loginBtn.addEventListener('click', doLogin);
+        demoBtn.addEventListener('click', doDemo);
+        logoutBtn.addEventListener('click', doLogout);
+        $('addWeaponBtn').addEventListener('click', () => openModal(false));
+        $('modalClose').addEventListener('click', closeModal);
+        $('cancelBtn').addEventListener('click', closeModal);
+        $('saveBtn').addEventListener('click', saveWeapon);
+        $('exportBtn').addEventListener('click', exportJSON);
+        $('importBtn').addEventListener('click', () => $('importFile').click());
+        $('importFile').addEventListener('change', importJSON);
+        
+        // 分类切换
+        categoryTabs.addEventListener('click', e => {
+            if (e.target.classList.contains('category-tab')) {
+                state.currentCategory = e.target.dataset.category;
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                renderWeapons();
+            }
+        });
+        
+        // 模态框点击外部关闭
+        weaponModal.addEventListener('click', e => {
+            if (e.target === weaponModal) closeModal();
+        });
+        
+        // 滑条实时更新
+        ['FireRate', 'Damage', 'Accuracy', 'Range'].forEach(s => {
+            $(`stat${s}`).addEventListener('input', e => {
+                $(`stat${s}Value`).textContent = e.target.value;
+            });
+        });
+        
+        // 图片上传
+        $('imageUpload').addEventListener('click', () => $('imageInput').click());
+        $('imageInput').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                state.editImage = ev.target.result;
+                $('imagePreview').src = ev.target.result;
+                $('imagePreview').style.display = 'block';
+                $('imageUploadText').style.display = 'none';
+                $('imageUpload').classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // 启动
+        checkAuth();
+    </script>
+</body>
+</html>
